@@ -15,6 +15,7 @@
         ];
       in
       rec {
+        packages.rofi-blocks = pkgs.callPackage ./packages/rofi-blocks.nix { };
         packages.frece = pkgs.callPackage ./packages/frece.nix { };
         packages.default = pkgs.stdenv.mkDerivation {
           name = name;
@@ -24,6 +25,7 @@
             nim
             pkgconfig
             packages.frece
+            packages.rofi-blocks
           ];
 
           buildInputs = buildInputs;
@@ -57,6 +59,7 @@
           inherit pkgs;
           inherit nimpkgs;
           inherit buildInputs;
+          inherit packages;
         };
 
         defaultApp = {

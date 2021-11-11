@@ -1,4 +1,4 @@
-{ pkgs, nimpkgs, buildInputs }:
+{ pkgs, packages, nimpkgs, buildInputs }:
 
 pkgs.mkShell {
   shellHook = ''
@@ -7,5 +7,11 @@ pkgs.mkShell {
   buildInputs = with pkgs; buildInputs ++ [
     nim
     nimlsp
+    bc
+    (rofi.override {
+      plugins = [
+        packages.rofi-blocks
+      ];
+    })
   ];
 }
