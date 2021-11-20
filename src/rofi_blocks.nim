@@ -24,6 +24,13 @@ var state: consoleInputState
 
 var inputState: JsonNode = %* { "name": "noop", "value": "", }
 
+proc sendJson(lines: seq[string]): JsonNode =
+  %* {
+    "input action": "send",
+    "prompt": "search youtube",
+    "lines": lines
+  }
+
 while true:
 
   var command = state.readStdinNonBlocking()
@@ -34,14 +41,15 @@ while true:
 
   if inputState["name"].getStr() == "input change":
     var value = inputState["value"].getStr()
+
     if value.startsWith("m:"):
       value.removePrefix("m:")
-      echo (%* {"input action": "send", "prompt": "search youtube", "lines": [
-        execProcess(&"""echo "{value}" | bc"""),
-      ]})
+      echo sendJson(@[
+        execProcess(&"""echo "{value}" | bc""")
+      ])
     else:
-      echo (%* {"input action": "send", "prompt": "search youtube", "lines": []})
+      echo sendJson(@[])
   else:
-    echo (%* {"input action": "send", "prompt": "search youtube", "lines": []})
+    echo sendJson(@[])
 
-  # sleep 1
+  sleep 1
