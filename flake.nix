@@ -15,45 +15,105 @@
         ];
       in
       rec {
-        packages.rofi-blocks = pkgs.callPackage ./packages/rofi-blocks.nix { };
-        packages.frece = pkgs.callPackage ./packages/frece.nix { };
-        packages.default = pkgs.stdenv.mkDerivation {
-          name = name;
-          src = ./.;
 
-          nativeBuildInputs = with pkgs; [
-            nim
-            pkgconfig
-            packages.frece
-            packages.rofi-blocks
-          ];
+        packages = flake-utils.lib.flattenTree {
+          rofi-blocks = pkgs.callPackage ./packages/rofi-blocks.nix { };
+          frece = pkgs.callPackage ./packages/frece.nix { };
 
-          buildInputs = buildInputs;
 
-          buildPhase = with pkgs; ''
-            HOME=$TMPDIR
-            # Pass paths of needed buildInputs
-            # and nim packages fetched from nix
-            nim compile \
-                -d:release \
-                --verbosity:0 \
-                --hint[Processing]:off \
-                --excessiveStackTrace:on \
-                -p:${nimpkgs.cligen}/src \
-                -p:${nimpkgs.nimboost}/src \
-                -p:${nimpkgs.classy}/src \
-                -p:${nimpkgs.nimfp}/src \
-                -p:${nimpkgs.unicodedb}/src \
-                -p:${nimpkgs.regex}/src \
-                --out:$TMPDIR/${name} \
-                ./src/${name}.nim
-          '';
-          installPhase = ''
-            install -Dt \
-            $out/bin \
-            $TMPDIR/${name}
-          '';
+          rofi_cmder_2 =
+            let
+              name = "rofi_cmder";
+              rofiWithBlocks =
+                (pkgs.rofi.override {
+                  plugins = [
+                    packages.rofi-blocks
+                  ];
+                });
+            in
+            pkgs.stdenv.mkDerivation {
+              name = name;
+              src = ./.;
+
+              nativeBuildInputs = with pkgs; [
+                nim
+                pkgconfig
+                packages.frece
+                packages.rofi-blocks
+              ];
+
+              buildInputs = buildInputs;
+
+              buildPhase = with pkgs; ''
+                HOME=$TMPDIR
+                # Pass paths of needed buildInputs
+                # and nim packages fetched from nix
+                nim compile \
+                    --threads \
+                    -d:release \
+                    --verbosity:0 \
+                    --hint[Processing]:off \
+                    --excessiveStackTrace:on \
+                    -p:${nimpkgs.cligen}/src \
+                    -p:${nimpkgs.nimboost}/src \
+                    -p:${nimpkgs.classy}/src \
+                    -p:${nimpkgs.nimfp}/src \
+                    -p:${nimpkgs.unicodedb}/src \
+                    -p:${nimpkgs.regex}/src \
+                    --out:$TMPDIR/${name} \
+                    ./src/rofi_blocks.nim
+              '';
+              installPhase = with pkgs; ''
+                mkdir -p $out/bin $out/lib
+
+                install -Dt $out/lib $TMPDIR/${name}
+
+                echo "#! ${stdenv.shell}" >> "$out/bin/${name}"
+                echo "${rofiWithBlocks}/bin/rofi -modi blocks -show blocks -blocks-wrap $out/lib/${name} \"@\"" >> "$out/bin/${name}"
+                chmod +x "$out/bin/${name}"
+              '';
+            };
+
+          default = pkgs.stdenv.mkDerivation {
+            name = name;
+            src = ./.;
+
+            nativeBuildInputs = with pkgs; [
+              nim
+              pkgconfig
+              packages.frece
+            ];
+
+            buildInputs = buildInputs;
+
+            buildPhase = with pkgs; ''
+              HOME=$TMPDIR
+              # Pass paths of needed buildInputs
+              # and nim packages fetched from nix
+              nim compile \
+                  -d:release \
+                  --verbosity:0 \
+                  --hint[Processing]:off \
+                  --excessiveStackTrace:on \
+                  -p:${nimpkgs.cligen}/src \
+                  -p:${nimpkgs.nimboost}/src \
+                  -p:${nimpkgs.classy}/src \
+                  -p:${nimpkgs.nimfp}/src \
+                  -p:${nimpkgs.unicodedb}/src \
+                  -p:${nimpkgs.regex}/src \
+                  --out:$TMPDIR/${name} \
+                  ./src/${name}.nim
+            '';
+            installPhase = ''
+              install -Dt \
+              $out/bin \
+              $TMPDIR/${name}
+            '';
+          };
+
         };
+
+        apps.rofi_cmder_2 = flake-utils.lib.mkApp { drv = packages.rofi_cmder_2; };
 
         devShell = import ./shell.nix {
           inherit pkgs;
@@ -68,6 +128,5 @@
         };
 
         defaultPackage = packages.default;
-
       });
 }
