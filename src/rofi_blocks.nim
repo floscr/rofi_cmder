@@ -3,6 +3,9 @@ import std/json
 import strformat, strutils
 import os, osproc
 import std/[times, os]
+import fp/std/jsonops
+import fp/either
+import std/re
 
 type consoleInputState* = FlowVar[string]
 
@@ -11,10 +14,6 @@ proc readStdinNonBlocking* (state: var consoleInputState): string =
     result = ""
     state = spawn readLine stdin
   elif state.isReady:
-    # echo ^state
-    # echo typeof ^state
-    # echo "Is not there: " & ^state == ""
-    # writeFile("/tmp/rof_blocks_logs/" & (now().format("yyyy-MM-dd HH:mm:ss")), ^state)
     result = ^state
     state = spawn readLine stdin
   else:
@@ -31,25 +30,48 @@ proc sendJson(lines: seq[string]): JsonNode =
     "lines": lines
   }
 
+proc matchInput(value: string): seq[string] =
+  if value =~ re"\d":
+    @[
+      execProcess(&"""echo "{value}" | bc""")
+    ]
+  else:
+    @[]
+
 while true:
 
   var command = state.readStdinNonBlocking()
 
   if not command.isEmptyOrWhitespace:
-    # writeFile("/tmp/rof_blocks_logs/command-" & (now().format("yyyy-MM-dd HH:mm:ss")), command)
     inputState = parseJson(command)
 
-  if inputState["name"].getStr() == "input change":
+  let response = case inputState["name"].getStr():
+  of "input change":
     var value = inputState["value"].getStr()
-
-    if value.startsWith("m:"):
-      value.removePrefix("m:")
-      echo sendJson(@[
-        execProcess(&"""echo "{value}" | bc""")
-      ])
-    else:
-      echo sendJson(@[])
+    matchInput(value)
   else:
-    echo sendJson(@[])
+    @[]
+
+  echo sendJson(response)
+
+
+  # if inputState["name"].getStr() == "input change":
+  #   var value = inputState["value"].getStr()
+
+
+  # if not command.isEmptyOrWhitespace:
+  #   # writeFile("/tmp/rof_blocks_logs/command-" & (now().format("yyyy-MM-dd HH:mm:ss")), command)
+  #   inputState =
+
+
+  #   if value.startsWith("m:"):
+  #     value.removePrefix("m:")
+  #     echo sendJson(@[
+  #       execProcess(&"""echo "{value}" | bc""")
+  #     ])
+  #   else:
+  #     echo sendJson(@[])
+  # else:
+  #   echo sendJson(@[])
 
   sleep 1
