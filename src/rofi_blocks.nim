@@ -38,40 +38,23 @@ proc matchInput(value: string): seq[string] =
   else:
     @[]
 
-while true:
+proc main(): auto =
+  while true:
+    var command = state.readStdinNonBlocking()
 
-  var command = state.readStdinNonBlocking()
+    if not command.isEmptyOrWhitespace:
+      inputState = parseJson(command)
 
-  if not command.isEmptyOrWhitespace:
-    inputState = parseJson(command)
+    let response = case inputState["name"].getStr():
+    of "input change":
+      var value = inputState["value"].getStr()
+      matchInput(value)
+    else:
+      @[]
 
-  let response = case inputState["name"].getStr():
-  of "input change":
-    var value = inputState["value"].getStr()
-    matchInput(value)
-  else:
-    @[]
+    echo sendJson(response)
 
-  echo sendJson(response)
+    sleep 1
 
-
-  # if inputState["name"].getStr() == "input change":
-  #   var value = inputState["value"].getStr()
-
-
-  # if not command.isEmptyOrWhitespace:
-  #   # writeFile("/tmp/rof_blocks_logs/command-" & (now().format("yyyy-MM-dd HH:mm:ss")), command)
-  #   inputState =
-
-
-  #   if value.startsWith("m:"):
-  #     value.removePrefix("m:")
-  #     echo sendJson(@[
-  #       execProcess(&"""echo "{value}" | bc""")
-  #     ])
-  #   else:
-  #     echo sendJson(@[])
-  # else:
-  #   echo sendJson(@[])
-
-  sleep 1
+when isMainModule:
+  main()
