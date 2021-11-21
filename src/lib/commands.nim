@@ -10,9 +10,10 @@ import constants
 
 type
   ConfigItem* = ref object
-    description: string
-    command: Option[string]
-    binding: Option[string]
+    description*: string
+    command*: Option[string]
+    binding*: Option[string]
+    exclude*: Option[bool]
 
 proc getCommandsConfigDir(): string =
   getConfigDir()
@@ -28,5 +29,3 @@ proc getCommands*(path: string = getCommandsConfigDir()): EitherS[seq[ConfigItem
   .flatMap((xs: seq[JsonNode]) => trySt(
     xs.map((x: JsonNode) => to(x, ConfigItem)))
   )
-
-proc getDescription*(x: ConfigItem): string = x.description
