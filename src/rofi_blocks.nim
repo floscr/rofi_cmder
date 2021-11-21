@@ -5,25 +5,25 @@ import strutils
 import lib/rofi_blocks_lib as rofiBlocks
 import lib/input_match
 
-# State
-var state: rofiBlocks.consoleInputState
-var stdinState: JsonNode = %* { "name": "noop", "value": "", }
+# StdinState
+var stdinState: rofiBlocks.consoleInputState
+var stdinJsonState: JsonNode = %* { "name": "noop", "value": "", }
 
 proc main(): auto =
   while true:
-    var command = readStdinNonBlocking(state)
+    var command = readStdinNonBlocking(stdinState)
 
     # writeFile("/tmp/rof_blocks_logs", command)
 
     if not command.isEmptyOrWhitespace:
-      stdinState = parseJson(command)
+      stdinJsonState = parseJson(command)
 
-    let response = case stdinState["name"].getStr():
+    let response = case stdinJsonState["name"].getStr():
     of "input change":
-      var value = stdinState["value"].getStr()
+      var value = stdinJsonState["value"].getStr()
       matchInput(value)
     of "select entry":
-      var value = stdinState["value"].getStr()
+      var value = stdinJsonState["value"].getStr()
       matchInput(value)
     else:
       @[]
