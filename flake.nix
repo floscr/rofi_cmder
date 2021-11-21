@@ -58,6 +58,7 @@
                     -p:${nimpkgs.nimboost}/src \
                     -p:${nimpkgs.classy}/src \
                     -p:${nimpkgs.nimfp}/src \
+                    -p:${nimpkgs.print}/src \
                     -p:${nimpkgs.unicodedb}/src \
                     -p:${nimpkgs.regex}/src \
                     --out:$TMPDIR/${name} \
