@@ -1,15 +1,27 @@
-import std/json
+import std/json,
+       std/strutils,
+       std/sequtils
+
 import os
-import strutils
+
+import fp/either
 
 import lib/rofi_blocks_lib as rofiBlocks
 import lib/input_match
+import lib/commands
 
-# StdinState
+const COMMANDS_CONFIG_FILENAME = "commands.json"
+
+# State
 var stdinState: rofiBlocks.consoleInputState
 var stdinJsonState: JsonNode = %* { "name": "noop", "value": "", }
 
 proc main(): auto =
+  let commands: seq[ConfigItem] = getCommands().getOrElse(@[])
+
+  let descriptions: seq[string] = commands.map(getDescription)
+
+
   while true:
     var command = readStdinNonBlocking(stdinState)
 
@@ -22,11 +34,13 @@ proc main(): auto =
     of "input change":
       var value = stdinJsonState["value"].getStr()
       matchInput(value)
+      .concat(descriptions)
     of "select entry":
       var value = stdinJsonState["value"].getStr()
       matchInput(value)
+      .concat(descriptions)
     else:
-      @[]
+      descriptions
 
     echo sendJson(response)
 
