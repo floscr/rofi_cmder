@@ -23,8 +23,7 @@ proc getCommandsConfigDir(): string =
 proc getCommands*(path: string = getCommandsConfigDir()): EitherS[seq[ConfigItem]] =
   trySt(readFile(path))
   .flatMap((x: string) => trySt(
-    parseJson(x)
-    .getElems()
+    parseJson(x).getElems()
   ))
   .flatMap((xs: seq[JsonNode]) => trySt(
     xs.map((x: JsonNode) => to(x, ConfigItem)))
