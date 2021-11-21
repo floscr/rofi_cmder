@@ -13,7 +13,7 @@ proc main(): auto =
   while true:
     var command = readStdinNonBlocking(state)
 
-    writeFile("/tmp/rof_blocks_logs", command)
+    # writeFile("/tmp/rof_blocks_logs", command)
 
     if not command.isEmptyOrWhitespace:
       stdinState = parseJson(command)
