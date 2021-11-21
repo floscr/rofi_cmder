@@ -10,8 +10,6 @@ import lib/rofi_blocks_lib as rofiBlocks
 import lib/input_match
 import lib/commands
 
-const COMMANDS_CONFIG_FILENAME = "commands.json"
-
 # State
 var stdinState: rofiBlocks.consoleInputState
 var stdinJsonState: JsonNode = %* { "name": "noop", "value": "", }
