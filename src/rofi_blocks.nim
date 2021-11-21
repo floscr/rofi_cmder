@@ -18,7 +18,6 @@ proc main(): auto =
   let commands: seq[ConfigItem] = getCommands().getOrElse(@[])
   let descriptions: seq[string] = commands.mapIt(it.description)
 
-
   while true:
     var command = readStdinNonBlocking(stdinState)
 
