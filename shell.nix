@@ -8,6 +8,7 @@ pkgs.mkShell {
     nim
     nimlsp
     bc
+    units
     (rofi.override {
       plugins = [
         packages.rofi-blocks
