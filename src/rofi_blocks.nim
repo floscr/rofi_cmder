@@ -1,53 +1,29 @@
-import threadpool
 import std/json
-import strformat, strutils
-import os, osproc
-import std/[times, os]
-import fp/std/jsonops
-import fp/either
-import std/re
+import os
+import strutils
 
-type consoleInputState* = FlowVar[string]
+import lib/rofi_blocks_lib as rofiBlocks
+import lib/input_match
 
-proc readStdinNonBlocking* (state: var consoleInputState): string =
-  if state == nil:
-    result = ""
-    state = spawn readLine stdin
-  elif state.isReady:
-    result = ^state
-    state = spawn readLine stdin
-  else:
-    result = ""
-
-var state: consoleInputState
-
-var inputState: JsonNode = %* { "name": "noop", "value": "", }
-
-proc sendJson(lines: seq[string]): JsonNode =
-  %* {
-    "input action": "send",
-    "prompt": "search youtube",
-    "lines": lines
-  }
-
-proc matchInput(value: string): seq[string] =
-  if value =~ re"\d":
-    @[
-      execProcess(&"""echo "{value}" | bc""")
-    ]
-  else:
-    @[]
+# State
+var state: rofiBlocks.consoleInputState
+var stdinState: JsonNode = %* { "name": "noop", "value": "", }
 
 proc main(): auto =
   while true:
-    var command = state.readStdinNonBlocking()
+    var command = readStdinNonBlocking(state)
+
+    writeFile("/tmp/rof_blocks_logs", command)
 
     if not command.isEmptyOrWhitespace:
-      inputState = parseJson(command)
+      stdinState = parseJson(command)
 
-    let response = case inputState["name"].getStr():
+    let response = case stdinState["name"].getStr():
     of "input change":
-      var value = inputState["value"].getStr()
+      var value = stdinState["value"].getStr()
+      matchInput(value)
+    of "select entry":
+      var value = stdinState["value"].getStr()
       matchInput(value)
     else:
       @[]
