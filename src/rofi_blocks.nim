@@ -2,6 +2,7 @@ import std/json
 import std/strutils
 import std/sequtils
 import std/os
+import std/sugar
 import fp/either
 import lib/rofi_blocks_lib as rofiBlocks
 import lib/input_match
@@ -13,7 +14,9 @@ var stdinJsonState: JsonNode = %* {"name": "noop", "value": "", }
 
 # Main
 proc main(): auto =
-  let commands: seq[ConfigItem] = getCommands().getOrElse(@[])
+  let commands: seq[ConfigItem] = getCommands()
+  .getOrElse(@[])
+  .filter((x: ConfigItem) => not x.description.isEmptyOrWhitespace())
   let descriptions: seq[string] = commands.mapIt(it.description)
   
   while true:
