@@ -14,10 +14,11 @@ import lib/commands
 var stdinState: rofiBlocks.consoleInputState
 var stdinJsonState: JsonNode = %* {"name": "noop", "value": "", }
 
+# Main
 proc main(): auto =
   let commands: seq[ConfigItem] = getCommands().getOrElse(@[])
   let descriptions: seq[string] = commands.mapIt(it.description)
-
+  
   while true:
     var command = readStdinNonBlocking(stdinState)
 
@@ -26,18 +27,8 @@ proc main(): auto =
     if not command.isEmptyOrWhitespace:
       stdinJsonState = parseJson(command)
 
-    let response =
-      case stdinJsonState["name"].getStr():
-    of "input change":
-      var value = stdinJsonState["value"].getStr()
-      matchInput(value)
-      .concat(descriptions)
-    of "select entry":
-      var value = stdinJsonState["value"].getStr()
-      matchInput(value)
-      .concat(descriptions)
-    else:
-      descriptions
+    let response = onStdinJson(stdinJsonState)
+    .concat(descriptions)
 
     echo sendJson(response)
 
