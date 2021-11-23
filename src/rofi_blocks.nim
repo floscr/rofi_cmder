@@ -1,11 +1,8 @@
-import std/json,
-       std/strutils,
-       std/sequtils
-
-import os
-
+import std/json
+import std/strutils
+import std/sequtils
+import std/os
 import fp/either
-
 import lib/rofi_blocks_lib as rofiBlocks
 import lib/input_match
 import lib/commands
