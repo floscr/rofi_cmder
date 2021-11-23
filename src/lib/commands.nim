@@ -1,10 +1,10 @@
-import std/json,
-       std/options,
-       std/os,
-       std/sugar,
-       std/sequtils
-import fp/tryM,
-       fp/either
+import std/json
+import std/options
+import std/os
+import std/sugar
+import std/sequtils
+import fp/tryM
+import fp/either
 
 import constants
 
