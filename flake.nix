@@ -61,6 +61,7 @@
                     -p:${nimpkgs.print}/src \
                     -p:${nimpkgs.unicodedb}/src \
                     -p:${nimpkgs.regex}/src \
+                    -p:${nimpkgs.unpack}/src \
                     --out:$TMPDIR/${name} \
                     ./src/rofi_blocks.nim
               '';

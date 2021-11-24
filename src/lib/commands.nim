@@ -6,7 +6,6 @@ import std/strutils
 import std/sequtils
 import fp/tryM
 import fp/either
-
 import constants
 
 type
