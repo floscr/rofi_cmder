@@ -1,13 +1,16 @@
 import std/times
+import std/tables
 import std/os
 import std/sugar
 import std/sequtils
 import std/strutils
 import fp/tryM
 import fp/either
+import fp/map
 import unpack
 import constants
 import print
+import zero_functional
 
 type
   DbItem* = ref object
@@ -28,16 +31,25 @@ proc parseLine(x: string): DbItem =
     data: data,
   )
 
+proc parseLinesAsMap(xs: seq[string]): OrderedTable[string, seq[DbItem]] =
+  xs --> map(parseLine)
+  .group(it.data)
+
 proc prepareText(x: string): seq[string] =
   var y = x
   y.stripLineEnd()
   y.splitLines()
 
-proc readDb*(dbPath: string = getDbPath()): EitherE[seq[DbItem]] =
+proc readDb*(dbPath: string = getDbPath()): auto =
   tryET(readFile(dbPath))
   .map(prepareText)
   .flatMap((xs: seq[string]) => tryET(
-    xs.map((x: string) => parseLine(x))
+    parseLinesAsMap(xs)
   ))
+
+
+
+# echo @[-3, 1, 2, 3] --> filter(it > 0)
+
 
 print readDb("/home/floscr/.cache/cmder_history.db")
