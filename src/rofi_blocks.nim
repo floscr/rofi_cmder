@@ -16,7 +16,6 @@ var stdinJsonState: JsonNode = %* {"name": "noop", "value": "", }
 proc main(): auto =
   let commands: seq[ConfigItem] = getCommands()
   .getOrElse(@[])
-  .filter((x: ConfigItem) => not x.description.isEmptyOrWhitespace())
   let descriptions: seq[string] = commands.mapIt(it.description)
   
   while true:

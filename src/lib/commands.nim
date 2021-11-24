@@ -2,6 +2,7 @@ import std/json
 import std/options
 import std/os
 import std/sugar
+import std/strutils
 import std/sequtils
 import fp/tryM
 import fp/either
@@ -26,5 +27,7 @@ proc getCommands*(path: string = getCommandsConfigDir()): EitherE[seq[ConfigItem
     parseJson(x).getElems()
   ))
   .flatMap((xs: seq[JsonNode]) => tryET(
-    xs.map((x: JsonNode) => to(x, ConfigItem)))
-  )
+    xs
+    .map((x: JsonNode) => to(x, ConfigItem))
+    .filterIt(not it.description.isEmptyOrWhitespace())
+  ))
