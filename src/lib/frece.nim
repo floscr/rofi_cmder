@@ -12,9 +12,11 @@ import constants
 import print
 import zero_functional
 
+type count* = int
+
 type
   DbItem* = ref object
-    count*: int
+    count*: count
     time*: string
     data*: string
 
@@ -31,9 +33,9 @@ proc parseLine(x: string): DbItem =
     data: data,
   )
 
-proc parseLinesAsMap(xs: seq[string]): OrderedTable[string, seq[DbItem]] =
+proc parseLinesAsMap(xs: seq[string]): OrderedTable[count, seq[DbItem]] =
   xs --> map(parseLine)
-  .group(it.data)
+  .group(it.count)
 
 proc prepareText(x: string): seq[string] =
   var y = x
