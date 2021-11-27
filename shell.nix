@@ -8,6 +8,7 @@ pkgs.mkShell {
     nim
     nimlsp
     bc
+    translate-shell
     units
     (rofi.override {
       plugins = [
