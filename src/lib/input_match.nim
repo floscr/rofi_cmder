@@ -8,6 +8,7 @@ import fp/maybe
 import fp/either
 import ./env
 import ./utils/fp
+import ./state
 
 proc matchInput(value: string): seq[string] =
   let unitMatch = value.split(re" in ")
@@ -23,15 +24,13 @@ proc matchInput(value: string): seq[string] =
   else:
     @[]
 
-proc onStdinJson*(stdinJson: JsonNode): seq[string] =
-  case stdinJson["name"].getStr():
+proc onStdinJson*(state: State): seq[types.Command] =
+  case state.stdinJsonState["name"].getStr():
     of "input change":
-      var value = stdinJson["value"].getStr()
-      matchInput(value)
+      matchInput(state.inputText)
 
     of "select entry":
-      var value = stdinJson["value"].getStr()
-      matchInput(value)
+      matchInput(state.inputText)
 
     else:
       @[]
