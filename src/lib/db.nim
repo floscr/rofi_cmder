@@ -14,12 +14,12 @@ import fusion/matching
 import env
 import zero_functional
 import cascade
+import ./utils/fp
 
 {.experimental: "caseStmtMacros".}
 
 const DB_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:sszzz"
 
-type Result = enum Ok, Error
 
 proc dbDate*(x: DateTime): string =
   x.format(DB_TIME_FORMAT)

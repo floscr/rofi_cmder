@@ -3,6 +3,8 @@ import std/strutils
 import fp/either
 import print
 
+type Result* = enum Ok, Error
+
 proc log*(x: auto): auto =
   print(x)
   x
