@@ -4,7 +4,8 @@ result
 
 # Ignore binaries directly compiled from emacs during testing
 src/**/*
-!src/**/
 !src/**/*.*
+tests/**/*
+!tests/**/*.*
 dst
 /.env
