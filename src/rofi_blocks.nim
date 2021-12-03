@@ -17,13 +17,13 @@ import lib/desktop_entries
 import lib/steam_games
 import lib/types
 import lib/utils_option
+import lib/db
 
 # State
 var stdinState: rofiBlocks.consoleInputState
 
 # Main
 proc main(): auto =
-
   let mainCommands = getCommands().getOrElse(@[])
 
   let commands = mainCommands
@@ -53,12 +53,19 @@ proc main(): auto =
       .flatMap((x: int) => tryET(
         filteredCommands[x]
       ))
+
+      let commandString = command
       .asMaybe
       .flatMap((x: types.Command) => x.command.convertMaybe())
 
-      if (command.isEmpty()): quit(0)
+      if (commandString.isEmpty()): quit(0)
 
-      discard startProcess(command.get(), options={poStdErrToStdOut, poEvalCommand})
+      discard startProcess(
+        commandString.get(),
+        options={poStdErrToStdOut, poEvalCommand}
+      )
+
+      discard dbUpdateInsertRow(dbDataKeyFromCommand(command.get()))
 
       quit(1)
 
