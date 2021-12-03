@@ -25,6 +25,7 @@ import ./fpUtils
 const DB_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:sszzz"
 
 type Result = enum Ok, Error
+type DbTransaction = enum RowIncrement, RowInsert
 
 proc dbDate*(x: DateTime): string =
   x.format(DB_TIME_FORMAT)
@@ -89,36 +90,40 @@ proc dbUpdateFile(data: string, dbPath: string): Result =
 proc dbStreamIncrementInsertRow*(
   dbStream: FileStream,
   dataField: string
-): string =
+): (string, DbTransaction) =
   ## Update (if exists) or insert a row in the db FileStream with the matching data string.
   ## Returns the db as string with the updates applied.
   var output = ""
   var line = ""
-  var hasUpdateRow = false
+  var transaction = RowInsert
 
   while dbStream.readLine(line):
     let item = fromCsvRowString(line)
 
     if item.data == dataField:
       output &= item.increment().toCsvRowString() & "\n"
-      hasUpdateRow = true
+      transaction = RowIncrement
       continue
 
     output &= line & "\n"
 
-  if not hasUpdateRow:
+  if transaction != RowIncrement:
     output &= createDbItem(dataField).toCsvRowString()
 
-  output
+  (output, transaction)
 
 proc dbUpdateInsertRow(data: string, dbPath = env.dbPath()): auto =
   openDbStream(dbPath).tryET()
   .flatMap((stream: FileStream) => dbStreamIncrementInsertRow(stream, data).tryET())
-  .flatMap((data: string) => dbUpdateFile(data, dbPath).tryET())
+  .flatMap((xs: (string, DbTransaction)) =>
+           dbUpdateFile(xs[0], dbPath)
+           .tryET()
+           .map(_ => xs)
+  )
 
 proc parseLinesAsMap(xs: seq[string]): OrderedTable[countT, seq[DbItem]] =
   xs --> map(fromCsvRowString)
   .group(it.count)
 
 when isMainModule:
-  echo dbUpdateInsertRow("<span>ddsssdd​ddrun​</span>", "/tmp/foo")
+  echo dbUpdateInsertRow("<span>ddsssdd​dddsdsddrun​</span>", "/tmp/foo")
