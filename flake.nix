@@ -45,6 +45,13 @@
               buildInputs = buildInputs;
 
               buildPhase = with pkgs; let
+                fusion = pkgs.fetchFromGitHub
+                  ({
+                    owner = "nim-lang";
+                    repo = "fusion";
+                    rev = "v1.1";
+                    sha256 = "9tn0NTXHhlpoefmlsSkoNZlCjGE8JB3eXtYcm/9Mr0I=";
+                  });
                 nimfp = pkgs.fetchFromGitHub
                   ({
                     owner = "floscr";
@@ -63,6 +70,7 @@
                     --verbosity:0 \
                     --hint[Processing]:off \
                     --excessiveStackTrace:on \
+                    -p:${fusion}/src \
                     -p:${nimpkgs.cligen}/src \
                     -p:${nimpkgs.cligen}/src \
                     -p:${nimpkgs.nimboost}/src \
@@ -72,7 +80,6 @@
                     -p:${nimpkgs.unicodedb}/src \
                     -p:${nimpkgs.regex}/src \
                     -p:${nimpkgs.unpack}/src \
-                    -p:${nimpkgs.fusion}/src \
                     -p:${nimpkgs.zero_functional}/src \
                     --out:$TMPDIR/${name} \
                     ./src/rofi_blocks.nim
