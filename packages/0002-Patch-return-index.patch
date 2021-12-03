@@ -1,0 +1,15 @@
+diff --git a/src/blocks.c b/src/blocks.c
+index 0fbca76..0e4c78c 100644
+--- a/src/blocks.c
++++ b/src/blocks.c
+@@ -400,7 +400,9 @@ static ModeMode blocks_mode_result ( Mode *sw, int mretv, char **input, unsigned
+     } else if ( ( mretv & MENU_OK ) ) {
+         if(selected_line >= pageData->lines->len){ return RELOAD_DIALOG; }
+         LineData * lineData = &g_array_index (pageData->lines, LineData, selected_line);
+-        blocks_mode_private_data_write_to_channel(data, Event__SELECT_ENTRY, lineData->text, lineData->data);
++        char charValue[100];
++        sprintf(charValue, "%c", selected_line+'0');
++        blocks_mode_private_data_write_to_channel(data, Event__SELECT_ENTRY, lineData->text, charValue);
+         retv = RELOAD_DIALOG;
+     } else if ( ( mretv & MENU_ENTRY_DELETE ) == MENU_ENTRY_DELETE ) {
+         if(selected_line >= pageData->lines->len){ return RELOAD_DIALOG; }

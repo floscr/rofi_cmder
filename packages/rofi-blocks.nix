@@ -19,6 +19,7 @@ pkgs.stdenv.mkDerivation rec {
 
   patches = [
     ./0001-Patch-plugindir-to-output.patch
+    ./0002-Patch-return-index.patch
   ];
 
   meta = with lib; {
