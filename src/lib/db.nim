@@ -14,7 +14,7 @@ import std/times
 import fp/tryM
 import fp/either
 import fusion/matching
-import constants
+import env
 import print
 import zero_functional
 import cascade
@@ -68,14 +68,6 @@ proc fromCsvRowString(x: string): DbItem =
     data: data,
   )
 
-proc getDbPath(): string =
-  getCacheDir()
-  .joinPath(constants.CACHE_DIRNAME)
-  .joinPath(constants.CACHE_FREECE_DB_FILENAME)
-
-# proc readDb(path: string = getDbPath()): auto =
-#   fromEither(tryET do: lines path)
-
 proc parseLinesAsMap(xs: seq[string]): OrderedTable[countT, seq[DbItem]] =
   xs --> map(fromCsvRowString)
   .group(it.count)
@@ -84,11 +76,6 @@ proc prepareText(x: string): seq[string] =
   var y = x
   y.stripLineEnd()
   y.splitLines()
-
-# proc updateDb*(dbPath: string = getDbPath()): auto =
-
-# proc readDbLines(dbLines = readDb()): auto =
-#   dbLines
 
 when isMainModule:
   proc updateFile(data: string): auto =

@@ -7,7 +7,7 @@ import fp/std/jsonops
 import fp/either
 import fp/maybe
 import zero_functional
-import constants
+import env
 import ./types
 import ./utils_option.nim
 
@@ -25,16 +25,11 @@ proc fromJsonNode(json: JsonNode): types.Command =
     exclude: exclude.convertMaybe(),
   )
 
-proc getCommandsConfigDir(): string =
-  getConfigDir()
-  .joinPath(constants.CONFIG_DIRNAME)
-  .joinPath(constants.COMMANDS_CONFIG_FILENAME)
-
 proc fromJsonSeq(xs: seq[JsonNode]): seq[types.Command] =
   xs --> map((x: JsonNode) => fromJsonNode(x))
   .filter(not it.name.isEmptyOrWhitespace())
 
-proc getCommands*(path: string = getCommandsConfigDir()): auto =
+proc getCommands*(path: string = commandsPath()): auto =
   tryET(readFile(path))
   .flatMap((x: string) => tryET(
     parseJson(x).getElems()
