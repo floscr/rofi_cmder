@@ -63,7 +63,7 @@ proc `$`*(x: DbTransaction): string =
     DbItem: {dbItem},
 )"""
     of Increment(dbItem: @dbItem):
-       return &"""DbTransaction.Insert(
+       return &"""DbTransaction.Increment(
     DbItem: {dbItem},
 )"""
 
