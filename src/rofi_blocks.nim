@@ -6,6 +6,8 @@ import std/sugar
 import std/logging
 
 import fp/either
+import fp/list
+import fp/option
 
 import lib/rofi_blocks_lib as rofiBlocks
 import lib/input_match
@@ -36,6 +38,17 @@ proc main(): auto =
       commands
       .getCommandDescriptions(state.inputText)
     )
+
+    if state.stdinJsonState["name"].getStr() == "select entry":
+      var value: string = state.stdinJsonState["value"].getStr()
+      let command = commands
+      .asList
+      .find((x: ConfigItem) => x.description == value)
+      .flatMap((x: ConfigItem) => x.command)
+      .getOrElse("")
+
+      fileLogger.log(lvlInfo, command)
+      quit(1)
 
     echo sendJson(response)
 
