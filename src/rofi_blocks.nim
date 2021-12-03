@@ -30,9 +30,11 @@ proc main(): auto =
     if not command.isEmptyOrWhitespace:
       store.dispatch(UpdateStdinJsonState(text: command))
 
-    fileLogger.log(lvlInfo, store.getState.stdinJsonState)
+    let state = store.getState
 
-    let response = onStdinJson(store.getState.stdinJsonState)
+    fileLogger.log(lvlInfo, state.stdinJsonState)
+
+    let response = onStdinJson(state.stdinJsonState)
     .concat(
       commands
       .getCommandDescriptions(store.getState.stdinJsonState["value"].getStr(""))
