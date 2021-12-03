@@ -108,7 +108,7 @@ proc dbUpdateFile(data: string, dbPath: string): Result =
 
 proc incrementDbRow*(
   key: string,
-  dbStream: FileStream,
+  dbStream: Stream,
 ): (string, DbTransaction) =
   ## Update (if exists) or insert a row in the db FileStream with the matching data string.
   ## Returns the db as string with the updates applied.
