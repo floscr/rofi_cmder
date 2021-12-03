@@ -12,11 +12,10 @@ import lib/input_match
 import lib/commands
 import lib/state
 import lib/redux
+import lib/debug
 
 # State
 var stdinState: rofiBlocks.consoleInputState
-
-var fileLogger = newFileLogger("errors.log")
 
 # Main
 proc main(): auto =
@@ -31,8 +30,6 @@ proc main(): auto =
       store.dispatch(UpdateStdinJsonState(text: command))
 
     let state = store.getState
-
-    fileLogger.log(lvlInfo, state.stdinJsonState)
 
     let response = onStdinJson(state.stdinJsonState)
     .concat(

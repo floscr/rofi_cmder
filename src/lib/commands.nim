@@ -9,6 +9,9 @@ import fp/tryM
 import fp/either
 import zero_functional
 import constants
+import std/logging
+
+import print
 
 type
   ConfigItem* = ref object
