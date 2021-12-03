@@ -22,7 +22,7 @@ type
 proc `$`*(x: ConfigItem): string =
   &"""ConfigItem(description: {x.description})"""
 
-proc serialize(json: JsonNode): ConfigItem =
+proc fromJsonNode(json: JsonNode): ConfigItem =
   let description = json.mget("description").flatMap(mvalue(string)).asOption().join()
   let binding = json.mget("binding").flatMap(mvalue(string)).asOption().join()
   let command = json.mget("command").flatMap(mvalue(string)).asOption().join()
@@ -43,8 +43,8 @@ proc getCommandsConfigDir(): string =
 proc hasTestStr(testStr: string, matches: seq[string]): bool =
   matches.all(x => testStr.contains(x))
 
-proc serializeJson(xs: seq[JsonNode]): seq[ConfigItem] =
-  xs --> map((x: JsonNode) => serialize(x))
+proc fromJsonSeq(xs: seq[JsonNode]): seq[ConfigItem] =
+  xs --> map((x: JsonNode) => fromJsonNode(x))
   .filter(not it.description.isEmptyOrWhitespace())
 
 proc getCommands*(path: string = getCommandsConfigDir()): auto =
@@ -52,7 +52,7 @@ proc getCommands*(path: string = getCommandsConfigDir()): auto =
   .flatMap((x: string) => tryET(
     parseJson(x).getElems()
   ))
-  .flatMap((xs: seq[JsonNode]) => tryET(xs.serializeJson))
+  .flatMap((xs: seq[JsonNode]) => tryET(xs.fromJsonSeq))
 
 proc filterCommands*(xs: seq[ConfigItem], testString: string): seq[ConfigItem] =
   let testString = testString
