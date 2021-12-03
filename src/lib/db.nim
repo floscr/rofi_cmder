@@ -24,7 +24,7 @@ import print
 const DB_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:sszzz"
 const DB_DATA_SPLIT_CHAR = "​" # Zero Width Space
 
-## Data Types:
+# Data Types
 
 type dataT* = string
 type timeT* = string
@@ -60,7 +60,7 @@ proc `$`*(x: DbTransaction): string =
     DbItem: {dbItem},
 )"""
 
-## Utility Functions:
+# Utility Functions
 
 proc dbDate*(x: DateTime): string =
   x.format(DB_TIME_FORMAT)
@@ -158,7 +158,7 @@ proc incrementDbRow*(
 
   (output, transaction.get())
 
-## Implementation Methods:
+# Implementation Methods
 
 proc dbUpdateInsertRow*(data: string, dbPath = env.dbPath()): EitherE[DbTransaction] =
   ## Update
