@@ -2,6 +2,7 @@ import std/osproc
 import std/strutils
 import std/sugar
 import fp/either
+import fp/maybe
 import print
 
 type Result* = enum Ok, Error
@@ -34,3 +35,31 @@ proc filter*[E,A](v: Either[E, A], cond: A -> bool): Either[A,A] =
     v.get().left(E)
   else:
     v
+
+proc firstJust*[A, B](fns: seq[B {.nimcall.} -> Maybe[A]], arg: B): Maybe[A] =
+  ## Return the first Just in a list of functions
+  ## The function must return a Just
+  ## Otherwise returns a Nothing
+  var found = Nothing[A]()
+
+  for fn in fns:
+    let fnResult = fn(arg)
+    if fnResult.isDefined():
+      found = fnResult
+      break
+
+  found
+
+proc firstRight*[E,A,B](fns: seq[B {.nimcall.} -> Either[E,A]], arg: B): Either[E,A] =
+  ## Return the first Just in a list of functions
+  ## The function must return a Just
+  ## Otherwise returns a Nothing
+  var found = Left[E]()
+
+  for fn in fns:
+    let fnResult = fn(arg)
+    if fnResult.isRight():
+      found = fnResult
+      break
+
+  found
