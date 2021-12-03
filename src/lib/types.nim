@@ -31,6 +31,7 @@ proc `$`*(x: Command): string =
   case x:
     of desktopItem(name: @a):
        return &"""Command(
+    kind: desktopItem,
     name: {x.name},
     command: {x.command},
     desktopFilePath: {x.desktopFilePath},
@@ -38,7 +39,9 @@ proc `$`*(x: Command): string =
 )"""
     of configItem(name: @a):
        return &"""Command(
+    kind: configItem,
     name: {x.name},
+    command: {x.command},
 )"""
 
 proc hasTestStr(testStr: string, matches: seq[string]): bool =
