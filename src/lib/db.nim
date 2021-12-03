@@ -2,6 +2,8 @@ import std/tables
 import std/os
 import std/sugar
 import std/strutils
+import std/strformat
+import std/sequtils
 import fp/tryM
 import fp/either
 import fusion/matching
@@ -18,6 +20,13 @@ type
     count*: count
     time*: string
     data*: string
+
+proc `$`*(x: DbItem): string =
+     &"""DbItem(
+    count: {x.count},
+    time: {x.time},
+    data: {x.data},
+)"""
 
 proc getDbPath(): string =
   getCacheDir()
@@ -49,4 +58,4 @@ proc readDb*(dbPath: string = getDbPath()): auto =
   ))
 
 when isMainModule:
-  print readDb("/home/floscr/.cache/cmder_history.db")
+  echo readDb("/home/floscr/.cache/cmder_history.db")
