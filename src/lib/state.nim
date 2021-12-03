@@ -18,15 +18,17 @@ using
   state: State
   action: Action
 
+let initialState: State = State(
+  stdinJsonState: %* {"name": "noop", "value": "", },
+  inputText: "",
+  itemsCache: @[],
+)
+
 # Reducer
 proc reducer(state, action): State =
   if state == nil:
-    return State(
-      stdinJsonState: %* {"name": "noop", "value": "", },
+    return initialState
 
-      inputText: "",
-      itemsCache: @[],
-    )
   new(result); result[] = state[]
 
   if action of UpdateStdinJsonState:
