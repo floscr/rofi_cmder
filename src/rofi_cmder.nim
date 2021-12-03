@@ -1,6 +1,5 @@
 import std/json
 import std/os
-import std/osproc
 import std/sequtils
 import std/strutils
 import std/sugar
@@ -63,9 +62,13 @@ proc main(): auto =
 
       if (commandString.isEmpty()): quit(0)
 
-      discard startProcess(
-        commandString.get(),
-        options={poStdErrToStdOut, poEvalCommand}
+      discard execShellCmd(
+        commandString
+        .map((x: string) => (
+          if x.endsWith("&"): x
+          else: x & "&"
+        ))
+        .get()
       )
 
       discard dbUpdateInsertRow(
