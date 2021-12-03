@@ -119,7 +119,7 @@ proc dbStreamIncrementInsertRow*(
   while dbStream.readLine(line):
     let item = fromCsvRowString(line)
 
-    if item.data == dataField:
+    if transaction.isEmpty() and item.data == key:
       let newItem = item.increment()
       output &= newItem.toCsvRowString() & "\n"
       transaction = Just(DbTransaction(kind: Increment, dbItem: newItem))
