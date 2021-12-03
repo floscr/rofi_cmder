@@ -3,6 +3,8 @@ import std/re
 import std/strformat
 import std/strutils
 import std/sugar
+import std/collections/sequtils
+import fusion/matching
 import fp/maybe
 import fp/either
 import ../env
@@ -38,12 +40,22 @@ proc calcModule(x: ModuleArgT): ModuleResultT =
   else:
     empty
 
+proc googlerModule(x: ModuleArgT): ModuleResultT =
+  case x.words:
+    of ["g", all @rest]:
+      sh(&"""{googlerBinPath.get()} "{rest.join(" ")}"""")
+      .asMaybe()
+      .map(xs => xs.splitLines().map(asClipboardCopyCommand))
+    else:
+      empty
+
 proc matchInput(value: string): seq[types.Command] =
   let words = value.split(re"\s+")
 
   @[
     convertUnitModule,
     calcModule,
+    googlerModule,
   ]
   .firstJust((value, words))
   .getOrElse(@[])
@@ -58,3 +70,6 @@ proc getDynamicCommands*(state: State): seq[types.Command] =
 
     else:
       @[]
+      
+when isMainModule:
+  echo googlerModule(("foo", @["g", "foo"]))
