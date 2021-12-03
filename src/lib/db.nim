@@ -13,6 +13,7 @@ import std/os
 import std/times
 import fp/tryM
 import fp/either
+import fp/maybe
 import fusion/matching
 import env
 import print
@@ -25,7 +26,6 @@ import ./fpUtils
 const DB_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:sszzz"
 
 type Result = enum Ok, Error
-type DbTransaction = enum RowIncrement, RowInsert
 
 proc dbDate*(x: DateTime): string =
   x.format(DB_TIME_FORMAT)
@@ -48,6 +48,25 @@ proc `$`*(x: DbItem): string =
     time: {x.time},
     data: {x.data},
 )"""
+
+type
+  DbTransactionKind* = enum
+    Insert, Increment
+  DbTransaction* = ref object
+    dbItem*: DbItem
+    kind*: DbTransactionKind
+
+proc `$`*(x: DbTransaction): string =
+  case x:
+    of Insert(dbItem: @dbItem):
+       return &"""DbTransaction.Insert(
+    DbItem: {dbItem},
+)"""
+    of Increment(dbItem: @dbItem):
+       return &"""DbTransaction.Insert(
+    DbItem: {dbItem},
+)"""
+
 
 proc increment(x: DbItem): DbItem =
   cascade x:
@@ -95,30 +114,37 @@ proc dbStreamIncrementInsertRow*(
   ## Returns the db as string with the updates applied.
   var output = ""
   var line = ""
-  var transaction = RowInsert
+  var transaction = Nothing[DbTransaction]()
 
   while dbStream.readLine(line):
     let item = fromCsvRowString(line)
 
     if item.data == dataField:
-      output &= item.increment().toCsvRowString() & "\n"
-      transaction = RowIncrement
+      let newItem = item.increment()
+      output &= newItem.toCsvRowString() & "\n"
+      transaction = Just(DbTransaction(kind: Increment, dbItem: newItem))
       continue
 
     output &= line & "\n"
 
-  if transaction != RowIncrement:
-    output &= createDbItem(dataField).toCsvRowString()
+  if transaction.isEmpty():
+    let newItem = createDbItem(dataField)
+    output &= newitem.toCsvRowString()
+    transaction = Just(DbTransaction(kind: Insert, dbItem: newItem))
 
-  (output, transaction)
+  (output, transaction.get())
 
 proc dbUpdateInsertRow(data: string, dbPath = env.dbPath()): auto =
-  openDbStream(dbPath).tryET()
-  .flatMap((stream: FileStream) => dbStreamIncrementInsertRow(stream, data).tryET())
+  openDbStream(dbPath)
+  .tryET()
+  .flatMap((stream: FileStream) =>
+           dbStreamIncrementInsertRow(stream, data)
+           .tryET()
+  )
   .flatMap((xs: (string, DbTransaction)) =>
            dbUpdateFile(xs[0], dbPath)
            .tryET()
-           .map(_ => xs)
+           .map(_ => xs[1])
   )
 
 proc parseLinesAsMap(xs: seq[string]): OrderedTable[countT, seq[DbItem]] =
