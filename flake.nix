@@ -19,7 +19,6 @@
 
         packages = flake-utils.lib.flattenTree {
           rofi-blocks = pkgs.callPackage ./packages/rofi-blocks.nix { };
-          frece = pkgs.callPackage ./packages/frece.nix { };
 
           rofi_cmder_2 =
             let
@@ -38,7 +37,6 @@
               nativeBuildInputs = with pkgs; [
                 nim
                 pkgconfig
-                packages.frece
                 packages.rofi-blocks
               ];
 
@@ -57,7 +55,7 @@
                     owner = "floscr";
                     repo = "nimfp";
                     rev = "master";
-                    sha256 = "+w9OPgKA1HzFLAiMeD64xlIxqyC6hz5mEaPHYVhSm1I=";
+                    sha256 = "sha256-gEs4qovho5qTXCquEG+fZOsL3rGB+Ql/r0IeLhnHjFk=";
                   });
               in
               ''
@@ -96,44 +94,6 @@
               '';
             };
 
-          default = pkgs.stdenv.mkDerivation {
-            name = name;
-            src = ./.;
-
-            nativeBuildInputs = with pkgs; [
-              nim
-              pkgconfig
-              packages.frece
-            ];
-
-            buildInputs = buildInputs;
-
-            buildPhase = with pkgs; ''
-              HOME=$TMPDIR
-              # Pass paths of needed buildInputs
-              # and nim packages fetched from nix
-              nim compile \
-                  -d:release \
-                  --verbosity:0 \
-                  --hint[Processing]:off \
-                  --excessiveStackTrace:on \
-                  -p:${nimpkgs.cligen}/src \
-                  -p:${nimpkgs.nimboost}/src \
-                  -p:${nimpkgs.classy}/src \
-                  -p:${nimpkgs.nimfp}/src \
-                  -p:${nimpkgs.unicodedb}/src \
-                  -p:${nimpkgs.regex}/src \
-                  -p:${nimpkgs.redux}/src \
-                  --out:$TMPDIR/${name} \
-                  ./src/${name}.nim
-            '';
-            installPhase = ''
-              install -Dt \
-              $out/bin \
-              $TMPDIR/${name}
-            '';
-          };
-
         };
 
         apps.rofi_cmder_2 = flake-utils.lib.mkApp { drv = packages.rofi_cmder_2; };
@@ -145,11 +105,11 @@
           inherit packages;
         };
 
-        defaultApp = {
-          program = "${packages.default}/bin/${name}";
-          type = "app";
-        };
+        # defaultApp = {
+        #   program = "${packages.default}/bin/${name}";
+        #   type = "app";
+        # };
 
-        defaultPackage = packages.default;
+        # defaultPackage = packages.default;
       });
 }
