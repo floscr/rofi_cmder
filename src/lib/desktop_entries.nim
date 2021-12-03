@@ -3,6 +3,7 @@ import std/strutils
 import std/streams
 import std/sugar
 import std/os
+import std/sequtils
 import std/collections/sequtils
 import fusion/matching
 import zero_functional
@@ -52,7 +53,10 @@ proc parseDesktopFile(path: string): seq[types.Command] =
   entries
 
 proc getDesktopApplicationsDirs(): seq[string] =
-  getEnv("XDG_DATA_DIRS").split(sep=":")
+  let dataDirs = getEnv("XDG_DATA_DIRS").split(sep=":")
+  let dataHome = getEnv("XDG_DATA_HOME")
+
+  dataDirs & dataHome
 
 proc findDesktopFiles(dir: string): seq[string] =
   let files = toSeq(walkDir(dir, true))
