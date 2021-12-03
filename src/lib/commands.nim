@@ -11,9 +11,6 @@ import fp/either
 import fp/option
 import zero_functional
 import constants
-import std/logging
-
-import print
 
 type
   ConfigItem* = ref object
@@ -57,8 +54,7 @@ proc getCommands*(path: string = getCommandsConfigDir()): auto =
   ))
   .flatMap((xs: seq[JsonNode]) => tryET(xs.serializeJson))
 
-# Returns the filtered command descriptions
-proc getFilteredCommands*(xs: seq[ConfigItem], testString: string): seq[ConfigItem] =
+proc filterCommands*(xs: seq[ConfigItem], testString: string): seq[ConfigItem] =
   let testString = testString
   .toLowerAscii
   .split(re"\s+")
