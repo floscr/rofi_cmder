@@ -6,15 +6,15 @@ import ../src/lib/desktop_entries
 
 suite "desktop_entries":
   test "File parsing":
-    let entries: seq[DesktopEntry] = getDesktopApplications(@[getCurrentDir().joinPath("./data")])
+    let entries = getDesktopApplications(@[getCurrentDir().joinPath("./data")])
     check: entries.len == 2
 
     # First entry
-    check: entries[0].entryName == "Desktop Entry"
+    check: entries[0].desktopEntryHeader == "Desktop Entry"
     check: entries[0].name == "The Desktop Entry Name"
-    check: entries[0].exec == "command %U"
+    check: entries[0].command == "command %U"
 
     # First entry
-    check: entries[1].entryName == "Desktop Action new-window"
+    check: entries[1].desktopEntryHeader == "Desktop Action new-window"
     check: entries[1].name == "New Window"
-    check: entries[1].exec == """echo Symbol between "%u" params"""
+    check: entries[1].command == """echo Symbol between "%u" params"""

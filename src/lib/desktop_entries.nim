@@ -2,40 +2,21 @@ import std/parseutils
 import std/strutils
 import std/streams
 import std/sugar
-import std/strformat
 import std/os
-import std/osproc
 import std/collections/sequtils
-import zero_functional
-
 import fusion/matching
-
-import fp/option
 import zero_functional
+import types
 
 {.experimental: "caseStmtMacros".}
 
-type DesktopEntry* = ref object
-  filePath*: string
-  entryName*: string
-  name*: string
-  exec*: string
-
-proc `$`*(x: DesktopEntry): string =
-  &"""DesktopEntry(
-filePath: {x.filePath},
-entryName: {x.entryName},
-name: {x.name},
-exec: {x.exec},
-)"""
-
-proc parseDesktopFile(path: string): seq[DesktopEntry] =
+proc parseDesktopFile(path: string): seq[types.Command] =
   var strm = newFileStream(path, fmRead)
 
   var
     line: string = ""
-    entries: seq[DesktopEntry]
-    currentEntr: DesktopEntry
+    entries: seq[types.Command]
+    currentEntr: types.Command
 
   while strm.readLine(line):
     # Read lines until desktop section is found
@@ -43,9 +24,10 @@ proc parseDesktopFile(path: string): seq[DesktopEntry] =
       if currentEntr != nil:
         entries.add(currentEntr)
 
-      currentEntr = DesktopEntry(
-        filePath: path,
-        entryName: captureBetween(line, '[', ']')
+      currentEntr = types.Command(
+        kind: desktopItem,
+        desktopFilePath: path,
+        desktopEntryHeader: captureBetween(line, '[', ']')
       )
       continue
 
@@ -58,7 +40,7 @@ proc parseDesktopFile(path: string): seq[DesktopEntry] =
         currentEntr.name = value
         continue
       of ["Exec", @value]:
-        currentEntr.exec = value
+        currentEntr.command = value
         continue
 
   # Push the last parsed entry to the captured entries
@@ -78,7 +60,7 @@ proc findDesktopFiles(dir: string): seq[string] =
   files --> filter(it.path.endsWith("desktop"))
   .map(dir.joinPath(it.path))
 
-proc getDesktopApplications*(dirs: seq[string] = getDesktopApplicationsDirs()): seq[DesktopEntry] =
+proc getDesktopApplications*(dirs: seq[string] = getDesktopApplicationsDirs()): seq[types.Command] =
   let desktopFiles = dirs --> map(it.joinPath("/applications"))
   .map((x: string) => findDesktopFiles(x))
   .flatten()
