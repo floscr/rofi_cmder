@@ -21,5 +21,5 @@ direnv-start() {
 
 direnv-stop
 rm -rf errors.log
-nix run
+nix run --print-build-logs
 direnv-start
