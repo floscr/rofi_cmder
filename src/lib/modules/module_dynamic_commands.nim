@@ -4,6 +4,7 @@ import std/strformat
 import std/strutils
 import std/sugar
 import std/collections/sequtils
+import std/os
 import fusion/matching
 import fp/maybe
 import fp/either
@@ -43,9 +44,18 @@ proc calcModule(x: ModuleArgT): ModuleResultT =
 proc googlerModule(x: ModuleArgT): ModuleResultT =
   case x.words:
     of ["g", all @rest]:
-      sh(&"""{googlerBinPath} "{rest.join(" ")}"""")
+      sh(&"""{googlerBinPath} "{rest.join(" ")}" --json""")
       .asMaybe()
-      .map(xs => xs.splitLines().map(asClipboardCopyCommand))
+      .map((x: string) => parseJson(x)
+        .getElems()
+        .map(y => types.Command(
+          kind: configItem,
+          name: y["title"].getStr(),
+          command: (&"""xdg-open "{y["url"].getStr().quoteShell()}"""").some(),
+          preventDynamicFilter: true,
+          preventDbPersist: true,
+        ))
+      )
     else:
       empty
 
@@ -72,4 +82,14 @@ proc getDynamicCommands*(state: State): seq[types.Command] =
       @[]
       
 when isMainModule:
-  echo googlerModule(("foo", @["g", "foo"]))
+  sh(&"""googler nim sequtils --json""")
+  .asMaybe()
+  .map((x: string) => parseJson(x)
+    .getElems()
+    .map(y => types.Command(
+      kind: configItem,
+      name: y["title"].getStr(),
+      command: (&"""xdg-open "{y["url"].getStr().quoteShell()}"""").some(),
+    ))
+  )
+  .echo
