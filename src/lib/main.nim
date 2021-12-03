@@ -30,6 +30,9 @@ type
     command: string
     binding: Option[string]
 
+proc `$`*(x: ConfigItem): string =
+  &"""ConfigItem(description: {x.description}, command: {x.command})"""
+
 proc commands*(xs: seq[ConfigItem]): string =
   xs
     .mapIt(it.description)
