@@ -20,7 +20,6 @@ import ./utils/fp
 
 const DB_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:sszzz"
 
-
 ## Data Types:
 
 type dataT* = string
@@ -103,8 +102,11 @@ proc fromString*(x: string): seq[DbItem] =
   .split("\n")
   .map(fromCsvRowString)
 
-proc openDbStream(path: string): FileStream =
-  openFileStream(path, fmRead)
+proc openCreateDbStream(path: string): Stream =
+  if fileExists(path):
+    openFileStream(path, fmRead)
+  else:
+    newStringStream("")
 
 proc dbUpdateFile(data: string, dbPath: string): Result =
   ## Update the db file with new data
@@ -149,10 +151,11 @@ proc incrementDbRow*(
 
 ## Implementation Methods:
 
-proc dbUpdateInsertRow*(data: string, dbPath = env.dbPath()): auto =
-  openDbStream(dbPath)
+proc dbUpdateInsertRow*(data: string, dbPath = env.dbPath()): EitherE[DbTransaction] =
+  ## Update
+  openCreateDbStream(dbPath)
   .tryET()
-  .flatMap((stream: FileStream) =>
+  .flatMap((stream: Stream) =>
            incrementDbRow(key = data, dbStream = stream)
            .tryET()
   )
@@ -165,3 +168,6 @@ proc dbUpdateInsertRow*(data: string, dbPath = env.dbPath()): auto =
 proc parseLinesAsMap(xs: seq[string]): OrderedTable[countT, seq[DbItem]] =
   xs --> map(fromCsvRowString)
   .group(it.count)
+
+when isMainModule:
+  print dbUpdateInsertRow("foobar")
