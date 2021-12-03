@@ -17,6 +17,7 @@ import lib/state
 import lib/redux
 import lib/debug
 import lib/desktop_entries
+import lib/steam_games
 import lib/types
 import lib/utils_option
 
@@ -27,7 +28,11 @@ var stdinState: rofiBlocks.consoleInputState
 # Main
 proc main(): auto =
 
-  let commands = getCommands().getOrElse(@[]) & getDesktopApplications()
+  let mainCommands = getCommands().getOrElse(@[])
+
+  let commands = mainCommands
+  .concat(getDesktopApplications())
+  .concat(getSteamGames())
 
   while true:
     var command = readStdinNonBlocking(stdinState)
