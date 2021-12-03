@@ -17,10 +17,6 @@ import ./lib/state
 import ./lib/types
 import ./lib/utils_option
 
-# State
-var stdinState: rofiBlocks.consoleInputState
-
-# Main
 proc main(): auto =
   let commands = concat(
     getCommands().getOrElse(@[]),
@@ -31,6 +27,9 @@ proc main(): auto =
 
   let sortedCommands = dbRead()
   .sortCommandsByDbMap(commands)
+
+proc main(): auto =
+  var stdinState: rofiBlocks.consoleInputState
 
   while true:
     var command = readStdinNonBlocking(stdinState)
