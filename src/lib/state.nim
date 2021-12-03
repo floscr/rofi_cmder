@@ -1,4 +1,3 @@
-from commands import ConfigItem
 import std/json
 import redux
 
@@ -7,7 +6,6 @@ type
   State* = ref object
     stdinJsonState*: JsonNode
     inputText*: string
-    itemsCache*: seq[ConfigItem]
 
 # Actions
 type
@@ -21,7 +19,6 @@ using
 let initialState: State = State(
   stdinJsonState: %* {"name": "noop", "value": "", },
   inputText: "",
-  itemsCache: @[],
 )
 
 # Reducer
