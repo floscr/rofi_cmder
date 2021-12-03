@@ -11,6 +11,7 @@ import ./lib/input_match
 import ./lib/modules/module_commands
 import ./lib/modules/module_desktop_entries
 import ./lib/modules/module_steam_games
+import ./lib/modules/module_xmonad_commands
 import ./lib/redux
 import ./lib/rofi_blocks_lib as rofiBlocks
 import ./lib/state
@@ -26,7 +27,8 @@ proc main(): auto =
 
   let commands = mainCommands
   .concat(getDesktopApplications())
-  .concat(getSteamGames())
+  .concat(getDesktopApplications())
+  .concat(getXmonadCommands())
 
   let sortedCommands = dbRead()
   .sortCommandsByDbMap(commands)
