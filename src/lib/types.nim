@@ -32,6 +32,9 @@ proc `$`*(x: Command): string =
     of desktopItem(name: @a):
        return &"""Command(
     name: {x.name},
+    command: {x.command},
+    desktopFilePath: {x.desktopFilePath},
+    desktopEntryHeader: {x.desktopEntryHeader},
 )"""
     of configItem(name: @a):
        return &"""Command(
