@@ -54,7 +54,6 @@ proc main(): auto =
       if (command.isEmpty()): quit(0)
 
       let p = startProcess(command.get(), options={poStdErrToStdOut, poEvalCommand})
-      discard waitForExit(p)
 
       quit(1)
 
