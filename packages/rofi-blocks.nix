@@ -7,8 +7,8 @@ pkgs.stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "OmarCastro";
     repo = pname;
-    rev = "f219ceedd1c7baab6de92a69e94ee68bcad8f2bc";
-    sha256 = "1mn2dq30zm7ilsyjcxbbr3l999zisdyfg5z6k7j5z9wa8zbcss0l";
+    rev = "c84577749f71f6c0836fc7ca7ec0097d2fe66492";
+    sha256 = "3Jf88YsZiaVSPuzVp7+pbEfrKQ69CRWEsCNzf4Mh7+w=";
   };
 
   nativeBuildInputs = [ pkg-config autoreconfHook json-glib cairo ];
