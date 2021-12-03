@@ -23,12 +23,12 @@ var stdinState: rofiBlocks.consoleInputState
 
 # Main
 proc main(): auto =
-  let mainCommands = getCommands().getOrElse(@[])
-
-  let commands = mainCommands
-  .concat(getDesktopApplications())
-  .concat(getXmonadCommands())
-  .concat(getSteamGames())
+  let commands = concat(
+    getCommands().getOrElse(@[]),
+    getDesktopApplications(),
+    getXmonadCommands(),
+    getSteamGames()
+  )
 
   let sortedCommands = dbRead()
   .sortCommandsByDbMap(commands)
