@@ -8,9 +8,11 @@ import lib/rofi_blocks_lib as rofiBlocks
 import lib/input_match
 import lib/commands
 
+import lib/state
+import lib/redux
+
 # State
 var stdinState: rofiBlocks.consoleInputState
-var stdinJsonState: JsonNode = %* {"name": "noop", "value": "", }
 
 # Main
 proc main(): auto =
@@ -20,13 +22,16 @@ proc main(): auto =
   while true:
     var command = readStdinNonBlocking(stdinState)
 
+    # Update the state from stdin
     if not command.isEmptyOrWhitespace:
-      stdinJsonState = parseJson(command)
+      store.dispatch(UpdateStdinJsonState(text: command))
 
-    let response = onStdinJson(stdinJsonState)
+    fileLogger.log(lvlInfo, store.getState.stdinJsonState)
+
+    let response = onStdinJson(store.getState.stdinJsonState)
     .concat(
       commands
-      .getCommandDescriptions(stdinJsonState["value"].getStr(""))
+      .getCommandDescriptions(store.getState.stdinJsonState["value"].getStr(""))
     )
 
     echo sendJson(response)

@@ -16,6 +16,7 @@ requires "nimfp >= 0.4.5"
 requires "cligen >= 1.5.4"
 requires "zero_functional"
 requires "print"
+requires "redux"
 
 import distros
 if detectOs(NixOS):

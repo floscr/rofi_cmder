@@ -104,6 +104,7 @@
                   -p:${nimpkgs.nimfp}/src \
                   -p:${nimpkgs.unicodedb}/src \
                   -p:${nimpkgs.regex}/src \
+                  -p:${nimpkgs.redux}/src \
                   --out:$TMPDIR/${name} \
                   ./src/${name}.nim
             '';
