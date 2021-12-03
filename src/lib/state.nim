@@ -33,6 +33,10 @@ proc reducer(state, action): State =
     let json = UpdateStdinJsonState(action).text.parseJson
     result.stdinJsonState = json
 
+    case json["name"].getStr():
+      of "input change":
+        result.inputText = json["value"].getStr()
+
   else:
     result = state
 

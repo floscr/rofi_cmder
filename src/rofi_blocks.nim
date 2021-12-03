@@ -37,7 +37,7 @@ proc main(): auto =
     let response = onStdinJson(state.stdinJsonState)
     .concat(
       commands
-      .getCommandDescriptions(store.getState.stdinJsonState["value"].getStr(""))
+      .getCommandDescriptions(state.inputText)
     )
 
     echo sendJson(response)
