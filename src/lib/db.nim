@@ -106,9 +106,9 @@ proc dbUpdateFile(data: string, dbPath: string): Result =
 
   Ok
 
-proc dbStreamIncrementInsertRow*(
+proc incrementDbRow*(
+  key: string,
   dbStream: FileStream,
-  dataField: string
 ): (string, DbTransaction) =
   ## Update (if exists) or insert a row in the db FileStream with the matching data string.
   ## Returns the db as string with the updates applied.
@@ -128,7 +128,7 @@ proc dbStreamIncrementInsertRow*(
     output &= line & "\n"
 
   if transaction.isEmpty():
-    let newItem = createDbItem(dataField)
+    let newItem = createDbItem(key)
     output &= newitem.toCsvRowString()
     transaction = Just(DbTransaction(kind: Insert, dbItem: newItem))
 
@@ -138,7 +138,10 @@ proc dbUpdateInsertRow(data: string, dbPath = env.dbPath()): auto =
   openDbStream(dbPath)
   .tryET()
   .flatMap((stream: FileStream) =>
-           dbStreamIncrementInsertRow(stream, data)
+           incrementDbRow(
+             key = data,
+             dbStream = stream,
+           )
            .tryET()
   )
   .flatMap((xs: (string, DbTransaction)) =>
