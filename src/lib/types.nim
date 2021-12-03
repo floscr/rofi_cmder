@@ -6,6 +6,8 @@ import std/strutils
 import std/sequtils
 import std/sugar
 import std/times
+import std/strformat
+import std/os
 import zero_functional
 import cascade
 
@@ -25,6 +27,7 @@ type
     command*: Option[string]
 
     preventDbPersist*: bool
+    preventDynamicFilter*: bool
 
     count*: Option[countT]
     time*: Option[timeT]
@@ -66,7 +69,9 @@ proc filterByNames*(xs: seq[Command], testString: string): seq[Command] =
   .toLowerAscii()
   .split(re"\s+")
 
-  xs --> filter(it.name.toLowerAscii().hasTestStr(testString))
+  xs --> filter(
+    it.preventDynamicFilter or it.name.toLowerAscii().hasTestStr(testString)
+  )
 
 proc dbHash*(x: Command): string =
   x.name &
@@ -89,4 +94,5 @@ proc asClipboardCopyCommand*(name: string): Command =
     name: name,
     command: some(fmt"""echo "{name.quoteShell()}" | xclip -selection clipboard -in"""),
     preventDbPersist: true,
+    preventDynamicFilter: true,
   )
