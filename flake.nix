@@ -69,6 +69,8 @@
                     --hint[Processing]:off \
                     --excessiveStackTrace:on \
                     -d:UNITS_BIN_PATH="${pkgs.units}/bin/units" \
+                    -d:GOOGLER_BIN_PATH="${pkgs.googler}/bin/googler" \
+                    -d:DDGR_BIN_PATH="${pkgs.ddgr}/bin/ddgr" \
                     -p:${fusion}/src \
                     -p:${nimfp}/src \
                     -p:${nimpkgs.cascade}/src \

@@ -28,7 +28,11 @@ const UNITS_BIN_PATH {.strdefine.} = ""
 let unitsBinPath* = UNITS_BIN_PATH.strDefineToMaybe()
 
 const GOOGLER_BIN_PATH {.strdefine.} = ""
-let googlerBinPath* = GOOGLER_BIN_PATH.strDefineToMaybe()
+let googlerBinPath* = GOOGLER_BIN_PATH
+.strDefineToMaybe()
+.getOrElse("googler")
 
 const DDGR_BIN_PATH {.strdefine.} = ""
-let ddgrBinPath* = DDGR_BIN_PATH.strDefineToMaybe()
+let ddgrBinPath* = DDGR_BIN_PATH
+.strDefineToMaybe()
+.getOrElse("ddgr")

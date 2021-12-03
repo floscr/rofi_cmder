@@ -43,7 +43,7 @@ proc calcModule(x: ModuleArgT): ModuleResultT =
 proc googlerModule(x: ModuleArgT): ModuleResultT =
   case x.words:
     of ["g", all @rest]:
-      sh(&"""{googlerBinPath.get()} "{rest.join(" ")}"""")
+      sh(&"""{googlerBinPath} "{rest.join(" ")}"""")
       .asMaybe()
       .map(xs => xs.splitLines().map(asClipboardCopyCommand))
     else:
