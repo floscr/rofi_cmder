@@ -8,6 +8,7 @@ import std/osproc
 import fp/either
 import fp/list
 import fp/option
+import fp/std/jsonops
 
 import lib/rofi_blocks_lib as rofiBlocks
 import lib/input_match
@@ -33,24 +34,28 @@ proc main(): auto =
 
     let state = store.getState
 
+    let filteredCommands = commands.getFilteredCommands(state.inputText)
+
     let response = onStdinJson(state.stdinJsonState)
     .concat(
-      commands
-      .getCommandDescriptions(state.inputText)
+      filteredCommands.map((x: ConfigItem) => x.description)
     )
 
     if state.stdinJsonState["name"].getStr() == "select entry":
-      var value: string = state.stdinJsonState["value"].getStr()
-      let command = commands
-      .asList
-      .find((x: ConfigItem) => x.description == value)
+      let command = tryET(
+        state.stdinJsonState["data"].getStr().parseInt
+      )
+      .flatMap((x: int) => tryET(
+        filteredCommands[x]
+      ))
+      .asOption
       .flatMap((x: ConfigItem) => x.command)
-      .getOrElse("")
 
-      fileLogger.log(lvlInfo, command)
+      if (command.isEmpty()): quit(0)
 
-      let p = startProcess(command, options={poStdErrToStdOut, poEvalCommand})
+      let p = startProcess(command.get(), options={poStdErrToStdOut, poEvalCommand})
       discard waitForExit(p)
+
       quit(1)
 
     echo sendJson(response)

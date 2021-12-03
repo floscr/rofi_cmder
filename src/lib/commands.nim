@@ -67,10 +67,9 @@ proc getCommands*(path: string = getCommandsConfigDir()): auto =
   .flatMap((xs: seq[JsonNode]) => tryET(xs.serializeJson))
 
 # Returns the filtered command descriptions
-proc getCommandDescriptions*(xs: seq[ConfigItem], testString: string): seq[string] =
+proc getFilteredCommands*(xs: seq[ConfigItem], testString: string): seq[ConfigItem] =
   let testString = testString
   .toLowerAscii
   .split(re"\s+")
 
-  xs --> map(it.description)
-  .filter(it.toLowerAscii.hasTestStr(testString))
+  xs --> filter(it.description.toLowerAscii.hasTestStr(testString))
