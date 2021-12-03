@@ -40,7 +40,7 @@ proc parseDesktopFile(path: string): seq[types.Command] =
         currentEntr.name = value
         continue
       of ["Exec", @value]:
-        currentEntr.command = value
+        currentEntr.command = value.some
         continue
 
   # Push the last parsed entry to the captured entries

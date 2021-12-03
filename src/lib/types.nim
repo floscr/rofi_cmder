@@ -9,7 +9,7 @@ type
     desktopItem, configItem
   Command* = ref object
     name*: string
-    command*: string
+    command*: options.Option[string]
 
     case kind*: CommandKind
 
