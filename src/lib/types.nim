@@ -24,6 +24,8 @@ type
     name*: string
     command*: Option[string]
 
+    preventDbPersist*: bool
+
     count*: Option[countT]
     time*: Option[timeT]
 
@@ -86,4 +88,5 @@ proc asClipboardCopyCommand*(name: string): Command =
   Command(
     name: name,
     command: some(fmt"""echo "{name.quoteShell()}" | xclip -selection clipboard -in"""),
+    preventDbPersist: true,
   )

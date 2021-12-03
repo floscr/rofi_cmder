@@ -67,6 +67,8 @@ proc main(): auto =
 
         if (commandString.isEmpty()): quit(0)
 
+        let safeCommand: types.Command = command.get()
+
         discard execShellCmd(
           commandString
           .map((x: string) => (
@@ -76,11 +78,12 @@ proc main(): auto =
           .get()
         )
 
-        discard dbUpdateInsertRow(
-          command
-          .get()
-          .dbHash()
-        )
+        if not safeCommand.preventDbPersist:
+          discard dbUpdateInsertRow(
+            command
+            .get()
+            .dbHash()
+          )
 
         quit(1)
       else:
