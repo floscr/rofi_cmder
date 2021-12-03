@@ -1,6 +1,8 @@
 import threadpool
 import std/json
 
+const ROFI_BLOCKS_EVENT_SUBMIT* = "select entry"
+
 type consoleInputState* = FlowVar[string]
 
 proc readStdinNonBlocking* (state: var consoleInputState): string =

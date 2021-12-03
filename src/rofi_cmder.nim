@@ -45,36 +45,37 @@ proc main(): auto =
 
     let filteredCommands = commands.filterByNames(state.inputText)
 
-    if state.stdinJsonState["name"].getStr() == "select entry":
-      let command = tryET(
-        state.stdinJsonState["data"].getStr().parseInt
-      )
-      .flatMap((x: int) => tryET(
-        filteredCommands[x]
-      ))
-
-      let commandString = command
-      .asMaybe
-      .flatMap((x: types.Command) => x.command.convertMaybe())
-
-      if (commandString.isEmpty()): quit(0)
-
-      discard execShellCmd(
-        commandString
-        .map((x: string) => (
-          if x.endsWith("&"): x
-          else: x & "&"
+    case state.stdinJsonState["name"].getStr():
+      of ROFI_BLOCKS_EVENT_SUBMIT:
+        let command = tryET(
+          state.stdinJsonState["data"].getStr().parseInt
+        )
+        .flatMap((x: int) => tryET(
+          filteredCommands[x]
         ))
-        .get()
-      )
 
-      discard dbUpdateInsertRow(
-        command
-        .get()
-        .dbHash()
-      )
+        let commandString = command
+        .asMaybe
+        .flatMap((x: types.Command) => x.command.convertMaybe())
 
-      quit(1)
+        if (commandString.isEmpty()): quit(0)
+
+        discard execShellCmd(
+          commandString
+          .map((x: string) => (
+            if x.endsWith("&"): x
+            else: x & "&"
+          ))
+          .get()
+        )
+
+        discard dbUpdateInsertRow(
+          command
+          .get()
+          .dbHash()
+        )
+
+        quit(1)
 
     sleep 1
 
