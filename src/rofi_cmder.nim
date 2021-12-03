@@ -6,8 +6,8 @@ import std/sugar
 import fp/either
 import fp/maybe
 import ./lib/db
-import ./lib/input_match
 import ./lib/modules/module_commands
+import ./lib/modules/module_dynamic_commands
 import ./lib/modules/module_desktop_entries
 import ./lib/modules/module_steam_games
 import ./lib/modules/module_xmonad_commands
@@ -43,7 +43,7 @@ proc main(): auto =
 
     let state = store.getState
 
-    let dynamicEntries = onStdinJson(state)
+    let dynamicEntries = getDynamicCommands(state)
 
     let entries: seq[Command] = concat(
       dynamicEntries,

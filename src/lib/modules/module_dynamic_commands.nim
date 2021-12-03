@@ -6,10 +6,10 @@ import std/strutils
 import std/sugar
 import fp/maybe
 import fp/either
-import ./env
-import ./utils/fp
-import ./types
-import ./state
+import ../env
+import ../utils/fp
+import ../types
+import ../state
 
 proc matchInput(value: string): seq[types.Command] =
   let unitMatch = value.split(re" in ")
@@ -27,7 +27,7 @@ proc matchInput(value: string): seq[types.Command] =
   else:
     @[]
 
-proc onStdinJson*(state: State): seq[types.Command] =
+proc getDynamicCommands*(state: State): seq[types.Command] =
   case state.stdinJsonState["name"].getStr():
     of "input change":
       matchInput(state.inputText)
