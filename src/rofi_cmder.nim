@@ -36,11 +36,10 @@ proc main(): auto =
   let commands = getCommandItems()
 
   while true:
-    var command = readStdinNonBlocking(stdinState)
-
     # Update the state from stdin
-    if not command.isEmptyOrWhitespace:
-      store.dispatch(UpdateStdinJsonState(text: command))
+    let stdinCommand = readStdinNonBlocking(stdinState)
+    if not stdinCommand.isEmptyOrWhitespace():
+      store.dispatch(UpdateStdinJsonState(text: stdinCommand))
 
     let state = store.getState
 
