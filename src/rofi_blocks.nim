@@ -3,16 +3,20 @@ import std/strutils
 import std/sequtils
 import std/os
 import std/sugar
+import std/logging
+
 import fp/either
+
 import lib/rofi_blocks_lib as rofiBlocks
 import lib/input_match
 import lib/commands
-
 import lib/state
 import lib/redux
 
 # State
 var stdinState: rofiBlocks.consoleInputState
+
+var fileLogger = newFileLogger("errors.log")
 
 # Main
 proc main(): auto =
