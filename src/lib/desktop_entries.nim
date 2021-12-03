@@ -71,3 +71,6 @@ proc getDesktopApplications*(dirs: seq[string] = getDesktopApplicationsDirs()): 
 
   desktopFiles --> map(parseDesktopFile)
   .flatten()
+
+when isMainModule:
+  echo getDesktopApplications()
