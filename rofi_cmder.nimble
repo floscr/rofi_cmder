@@ -12,7 +12,7 @@ binDir        = "./dst"
 # Dependencies
 
 requires "nim >= 1.4.4"
-requires "nimfp >= 0.4.5"
+requires "https://github.com/floscr/nimfp#master"
 requires "cligen >= 1.5.4"
 requires "zero_functional"
 requires "print"

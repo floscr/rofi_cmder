@@ -7,7 +7,7 @@ import std/osproc
 
 import fp/either
 import fp/list
-import fp/option
+import fp/maybe
 import fp/std/jsonops
 
 import lib/rofi_blocks_lib as rofiBlocks
@@ -57,8 +57,8 @@ proc main(): auto =
       .flatMap((x: int) => tryET(
         filteredCommands[x]
       ))
-      .asOption
-      .flatMap((x: types.Command) => x.command.convertOption())
+      .asMaybe
+      .flatMap((x: types.Command) => x.command.convertMaybe())
 
       if (command.isEmpty()): quit(0)
 

@@ -1,14 +1,14 @@
 import std/options
-import fp/option
+import fp/maybe
 
-proc convertOption*[T](x: option.Option[T]): options.Option[T] =
-  if x.isDefined():
-    options.some(x.get())
-  else:
-    options.none(T)
-
-proc convertOption*[T](x: options.Option[T]): option.Option[T] =
+proc convertMaybe*[T](x: Option[T]): Maybe[T] =
   if x.isSome():
-    option.some(x.unsafeGet())
+    just(x.unsafeGet())
   else:
-    option.none(T)
+    nothing(T)
+
+proc convertMaybe*[T](x: Maybe[T]): Option[T] =
+  if maybe.isDefined(x):
+    some(x.get())
+  else:
+    none(T)

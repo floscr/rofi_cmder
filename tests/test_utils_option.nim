@@ -1,14 +1,14 @@
 import std/unittest
 import std/options
 import std/sugar
-import fp/option
+import fp/maybe
 
 import ../src/lib/utils_option
 
 suite "utils_option":
   test "fpOptionToStdOption":
-    let stdOption = option.some(true)
-    let fpOption = options.some(true)
+    let stdOption = some(true)
+    let fpOption = just(true)
 
-    check: convertOption(stdOption) == fpOption
-    check: convertOption(fpOption) == stdOption
+    check: convertMaybe(stdOption) == fpOption
+    check: convertMaybe(fpOption) == stdOption

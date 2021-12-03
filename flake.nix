@@ -44,7 +44,16 @@
 
               buildInputs = buildInputs;
 
-              buildPhase = with pkgs; ''
+              buildPhase = with pkgs; let
+                nimfp = pkgs.fetchFromGitHub
+                  ({
+                    owner = "floscr";
+                    repo = "nimfp";
+                    rev = "master";
+                    sha256 = "+w9OPgKA1HzFLAiMeD64xlIxqyC6hz5mEaPHYVhSm1I=";
+                  });
+              in
+              ''
                 HOME=$TMPDIR
                 # Pass paths of needed buildInputs
                 # and nim packages fetched from nix
@@ -55,9 +64,10 @@
                     --hint[Processing]:off \
                     --excessiveStackTrace:on \
                     -p:${nimpkgs.cligen}/src \
+                    -p:${nimpkgs.cligen}/src \
                     -p:${nimpkgs.nimboost}/src \
                     -p:${nimpkgs.classy}/src \
-                    -p:${nimpkgs.nimfp}/src \
+                    -p:${nimfp}/src \
                     -p:${nimpkgs.print}/src \
                     -p:${nimpkgs.unicodedb}/src \
                     -p:${nimpkgs.regex}/src \
