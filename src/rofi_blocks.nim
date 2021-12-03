@@ -16,14 +16,18 @@ import lib/commands
 import lib/state
 import lib/redux
 import lib/debug
+import lib/desktop_entries
+import lib/types
+import lib/utils_option
+
 
 # State
 var stdinState: rofiBlocks.consoleInputState
 
 # Main
 proc main(): auto =
-  let commands: seq[ConfigItem] = getCommands()
-  .getOrElse(@[])
+
+  let commands = getCommands().getOrElse(@[]) & getDesktopApplications()
 
   while true:
     var command = readStdinNonBlocking(stdinState)
@@ -34,11 +38,11 @@ proc main(): auto =
 
     let state = store.getState
 
-    let filteredCommands = commands.getFilteredCommands(state.inputText)
+    let filteredCommands = commands.filterByNames(state.inputText)
 
     let response = onStdinJson(state.stdinJsonState)
     .concat(
-      filteredCommands.map((x: ConfigItem) => x.description)
+      filteredCommands.map((x: types.Command) => x.name)
     )
 
     if state.stdinJsonState["name"].getStr() == "select entry":
@@ -49,7 +53,7 @@ proc main(): auto =
         filteredCommands[x]
       ))
       .asOption
-      .flatMap((x: ConfigItem) => x.command)
+      .flatMap((x: types.Command) => x.command.convertOption())
 
       if (command.isEmpty()): quit(0)
 

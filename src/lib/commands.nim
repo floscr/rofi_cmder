@@ -3,7 +3,6 @@ import std/re
 import std/os
 import std/sugar
 import std/strutils
-import std/strformat
 import std/sequtils
 import fp/tryM
 import fp/std/jsonops
@@ -11,28 +10,21 @@ import fp/either
 import fp/option
 import zero_functional
 import constants
+import ./types
+import ./utils_option.nim
 
-type
-  ConfigItem* = ref object
-    description*: string
-    command*: Option[string]
-    binding*: Option[string]
-    exclude*: Option[bool]
-
-proc `$`*(x: ConfigItem): string =
-  &"""ConfigItem(description: {x.description})"""
-
-proc fromJsonNode(json: JsonNode): ConfigItem =
+proc fromJsonNode(json: JsonNode): types.Command =
   let description = json.mget("description").flatMap(mvalue(string)).asOption().join()
   let binding = json.mget("binding").flatMap(mvalue(string)).asOption().join()
   let command = json.mget("command").flatMap(mvalue(string)).asOption().join()
   let exclude = json.mget("exclude ").flatMap(mvalue(bool)).asOption().join()
 
-  ConfigItem(
-    description: description.getOrElse(""),
-    command: command,
-    binding: binding,
-    exclude: exclude,
+  types.Command(
+    kind: types.configItem,
+    name: description.getOrElse(""),
+    command: command.convertOption(),
+    binding: binding.convertOption(),
+    exclude: exclude.convertOption(),
   )
 
 proc getCommandsConfigDir(): string =
