@@ -17,7 +17,7 @@ import ./lib/state
 import ./lib/types
 import ./lib/utils_option
 
-proc main(): auto =
+proc getCommandItems(): seq[types.Command] =
   let commands = concat(
     getCommands().getOrElse(@[]),
     getDesktopApplications(),
@@ -28,8 +28,12 @@ proc main(): auto =
   let sortedCommands = dbRead()
   .sortCommandsByDbMap(commands)
 
+  sortedCommands
+
 proc main(): auto =
   var stdinState: rofiBlocks.consoleInputState
+
+  let commands = getCommandItems()
 
   while true:
     var command = readStdinNonBlocking(stdinState)
@@ -40,7 +44,7 @@ proc main(): auto =
 
     let state = store.getState
 
-    let filteredCommands = sortedCommands.filterByNames(state.inputText)
+    let filteredCommands = commands.filterByNames(state.inputText)
 
     let response = onStdinJson(state.stdinJsonState)
     .concat(
