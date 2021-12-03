@@ -44,6 +44,3 @@ proc getCommandDescriptions*(xs: seq[ConfigItem], testString: string): seq[strin
 
   xs --> map(it.description)
   .filter(it.toLowerAscii.hasTestStr(testString))
-
-
-echo getCommandDescriptions(@[ConfigItem(description: "bar")], "")
