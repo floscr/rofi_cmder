@@ -11,6 +11,8 @@ pkgs.mkShell {
   buildInputs = with pkgs; buildInputs ++ [
     nim
     nimlsp
+    googler
+    ddgr
     bc
     translate-shell
     units
