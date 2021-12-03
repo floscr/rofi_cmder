@@ -15,6 +15,8 @@ import env
 import zero_functional
 import cascade
 import ./utils/fp
+import ./types
+import print
 
 {.experimental: "caseStmtMacros".}
 
@@ -101,6 +103,9 @@ proc fromString*(x: string): seq[DbItem] =
   .dup(stripLineEnd)
   .split("\n")
   .map(fromCsvRowString)
+
+proc dbDataKeyFromCommand*(x: types.Command): dataT =
+  x.name & x.command.get("")
 
 proc openCreateDbStream(path: string): Stream =
   if fileExists(path):
