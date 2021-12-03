@@ -21,11 +21,7 @@ import ./utils/fp
 const DB_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:sszzz"
 
 
-proc dbDate*(x: DateTime): string =
-  x.format(DB_TIME_FORMAT)
-
-proc dbDate*(): string {.inline.} =
-  utc(now()).dbDate()
+## Data Types:
 
 type dataT* = string
 type timeT* = string
@@ -61,6 +57,13 @@ proc `$`*(x: DbTransaction): string =
     DbItem: {dbItem},
 )"""
 
+## Utility Functions:
+
+proc dbDate*(x: DateTime): string =
+  x.format(DB_TIME_FORMAT)
+
+proc dbDate*(): string {.inline.} =
+  utc(now()).dbDate()
 
 proc increment(x: DbItem): DbItem =
   cascade x:
@@ -120,8 +123,8 @@ proc incrementDbRow*(
   dbStream: Stream,
   createDbItem = createDbItem,
 ): (string, DbTransaction) =
-  ## Update (if exists) or insert a row in the db FileStream with the matching data string.
-  ## Returns the db as string with the updates applied.
+  ## Update (if exists) or inserts a row in the db Stream with the matching data key.
+  ## Returns the db output as string with the updates applied.
   var output = ""
   var line = ""
   var transaction = Nothing[DbTransaction]()
@@ -144,11 +147,7 @@ proc incrementDbRow*(
 
   (output, transaction.get())
 
-proc parseLinesAsMap(xs: seq[string]): OrderedTable[countT, seq[DbItem]] =
-  xs --> map(fromCsvRowString)
-  .group(it.count)
-
-## Implementation Methods
+## Implementation Methods:
 
 proc dbUpdateInsertRow*(data: string, dbPath = env.dbPath()): auto =
   openDbStream(dbPath)
@@ -163,3 +162,6 @@ proc dbUpdateInsertRow*(data: string, dbPath = env.dbPath()): auto =
            .map(_ => xs[1])
   )
 
+proc parseLinesAsMap(xs: seq[string]): OrderedTable[countT, seq[DbItem]] =
+  xs --> map(fromCsvRowString)
+  .group(it.count)
