@@ -20,7 +20,7 @@
         packages = flake-utils.lib.flattenTree {
           rofi-blocks = pkgs.callPackage ./packages/rofi-blocks.nix { };
 
-          rofi_cmder_2 =
+          rofi_cmder =
             let
               name = "rofi_cmder";
               rofiWithBlocks =
@@ -96,7 +96,7 @@
 
         };
 
-        apps.rofi_cmder_2 = flake-utils.lib.mkApp { drv = packages.rofi_cmder_2; };
+        apps.rofi_cmder = flake-utils.lib.mkApp { drv = packages.rofi_cmder; };
 
         devShell = import ./shell.nix {
           inherit pkgs;
@@ -105,11 +105,11 @@
           inherit packages;
         };
 
-        # defaultApp = {
-        #   program = "${packages.default}/bin/${name}";
-        #   type = "app";
-        # };
+        defaultApp = {
+          program = "${packages.rofi_cmder}/bin/${name}";
+          type = "app";
+        };
 
-        # defaultPackage = packages.default;
+        defaultPackage = packages.rofi_cmder;
       });
 }
