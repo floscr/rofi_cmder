@@ -1,25 +1,19 @@
 import std/tables
-import std/asyncdispatch
 import std/os
 import std/tempfiles
 import std/sugar
 import std/strutils
 import std/strformat
 import std/sequtils
-import std/strutils
 import std/streams
-import std/strformat
-import std/os
 import std/times
 import fp/tryM
 import fp/either
 import fp/maybe
 import fusion/matching
 import env
-import print
 import zero_functional
 import cascade
-import ./fpUtils
 
 {.experimental: "caseStmtMacros".}
 
@@ -150,7 +144,13 @@ proc incrementDbRow*(
 
   (output, transaction.get())
 
-proc dbUpdateInsertRow(data: string, dbPath = env.dbPath()): auto =
+proc parseLinesAsMap(xs: seq[string]): OrderedTable[countT, seq[DbItem]] =
+  xs --> map(fromCsvRowString)
+  .group(it.count)
+
+## Implementation Methods
+
+proc dbUpdateInsertRow*(data: string, dbPath = env.dbPath()): auto =
   openDbStream(dbPath)
   .tryET()
   .flatMap((stream: FileStream) =>
@@ -163,9 +163,3 @@ proc dbUpdateInsertRow(data: string, dbPath = env.dbPath()): auto =
            .map(_ => xs[1])
   )
 
-proc parseLinesAsMap(xs: seq[string]): OrderedTable[countT, seq[DbItem]] =
-  xs --> map(fromCsvRowString)
-  .group(it.count)
-
-when isMainModule:
-  echo dbUpdateInsertRow("<span>ddsssdd​dddsdsddrun​</span>", "/tmp/foo")
