@@ -7,6 +7,7 @@ import std/strformat
 import std/sequtils
 import std/streams
 import std/times
+import std/options
 import fp/tryM
 import fp/either
 import fp/maybe
@@ -173,6 +174,3 @@ proc dbUpdateInsertRow*(data: string, dbPath = env.dbPath()): EitherE[DbTransact
 proc parseLinesAsMap(xs: seq[string]): OrderedTable[countT, seq[DbItem]] =
   xs --> map(fromCsvRowString)
   .group(it.count)
-
-when isMainModule:
-  print dbUpdateInsertRow("foobar")
