@@ -19,9 +19,16 @@ proc commandsPath*(): string =
   configDir()
   .joinPath(COMMANDS_FILE_NAME)
 
-const UNITS_BIN_PATH {.strdefine.} = ""
+proc strDefineToMaybe(x: string): Maybe[string] =
+  x.just()
+  .notEmpty()
+  .filter(x => not x.defined())
 
-let unitsBinPath* = UNITS_BIN_PATH
-.just()
-.notEmpty()
-.filter(x => not x.defined())
+const UNITS_BIN_PATH {.strdefine.} = ""
+let unitsBinPath* = UNITS_BIN_PATH.strDefineToMaybe()
+
+const GOOGLER_BIN_PATH {.strdefine.} = ""
+let googlerBinPath* = GOOGLER_BIN_PATH.strDefineToMaybe()
+
+const DDGR_BIN_PATH {.strdefine.} = ""
+let ddgrBinPath* = DDGR_BIN_PATH.strDefineToMaybe()
