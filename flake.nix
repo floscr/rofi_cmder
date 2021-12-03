@@ -77,6 +77,7 @@
                     -p:${nimpkgs.classy}/src \
                     -p:${nimfp}/src \
                     -p:${nimpkgs.print}/src \
+                    -p:${nimpkgs.cascade}/src \
                     -p:${nimpkgs.unicodedb}/src \
                     -p:${nimpkgs.regex}/src \
                     -p:${nimpkgs.unpack}/src \
