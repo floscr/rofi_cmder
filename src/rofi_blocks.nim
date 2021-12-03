@@ -3,7 +3,6 @@ import std/strutils
 import std/sequtils
 import std/os
 import std/sugar
-import std/logging
 import std/osproc
 
 import fp/either
