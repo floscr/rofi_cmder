@@ -20,7 +20,6 @@
           rofi-blocks = pkgs.callPackage ./packages/rofi-blocks.nix { };
           frece = pkgs.callPackage ./packages/frece.nix { };
 
-
           rofi_cmder_2 =
             let
               name = "rofi_cmder";
