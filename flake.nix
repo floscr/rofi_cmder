@@ -81,7 +81,7 @@
                     -p:${nimpkgs.unpack}/src \
                     -p:${nimpkgs.zero_functional}/src \
                     --out:$TMPDIR/${name} \
-                    ./src/rofi_blocks.nim
+                    ./src/rofi_cmder.nim
               '';
               installPhase = with pkgs; ''
                 mkdir -p $out/bin $out/lib
