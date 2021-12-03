@@ -1,5 +1,4 @@
 import std/os
-import std/sequtils
 import std/unittest
 import std/options
 
