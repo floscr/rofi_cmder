@@ -6,11 +6,11 @@ const COMMANDS_FILE_NAME* = "commands.json"
 const DB_FILE_NAME* = "rofi_cmder.db"
 
 proc configDir*(): string =
-  getCacheDir()
+  getConfigDir()
   .joinPath(APP_NAME)
 
 proc dbPath*(): string =
-  configDir()
+  getCacheDir()
   .joinPath(DB_FILE_NAME)
 
 proc commandsPath*(): string =
