@@ -8,9 +8,12 @@ import std/sequtils
 import std/streams
 import std/times
 import std/options
+import std/algorithm
 import fp/tryM
 import fp/either
 import fp/maybe
+import fp/list
+import fp/map
 import fusion/matching
 import env
 import zero_functional
@@ -21,14 +24,10 @@ import print
 
 {.experimental: "caseStmtMacros".}
 
-const DB_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:sszzz"
-const DB_DATA_SPLIT_CHAR = "​" # Zero Width Space
-
 # Data Types
 
 type dataT* = string
-type timeT* = string
-type countT* = int
+
 type
   DbItem* = object
     data*: dataT
@@ -106,9 +105,12 @@ proc fromString*(x: string): seq[DbItem] =
   .split("\n")
   .map(fromCsvRowString)
 
+proc cmpByCount(x: DbItem, y: DbItem): int =
+  cmp(y.count, x.count)
+
 proc dbDataKeyFromCommand*(x: types.Command): dataT =
   x.name &
-    DB_DATA_SPLIT_CHAR &
+    DB_HASH_DATA_SPLIT_CHAR &
     x.command.get("")
 
 proc openCreateDbStream(path: string): Stream =
@@ -161,7 +163,6 @@ proc incrementDbRow*(
 # Implementation Methods
 
 proc dbUpdateInsertRow*(data: string, dbPath = env.dbPath()): EitherE[DbTransaction] =
-  ## Update
   openCreateDbStream(dbPath)
   .tryET()
   .flatMap((stream: Stream) =>
@@ -174,6 +175,35 @@ proc dbUpdateInsertRow*(data: string, dbPath = env.dbPath()): EitherE[DbTransact
            .map(_ => xs[1])
   )
 
-proc parseLinesAsMap(xs: seq[string]): OrderedTable[countT, seq[DbItem]] =
-  xs --> map(fromCsvRowString)
-  .group(it.count)
+
+proc toPair*(x: DbItem): tuple[k: dataT, v: DbItem] =
+  (x.data, x)
+
+proc dbRead*(dbPath = env.dbPath()): auto =
+  var result = readFile(dbPath)
+  stripLineEnd(result)
+
+  result
+  .split("\n")
+  .asList
+  .map(x => fromCsvRowString(x).toPair())
+  .asMap()
+
+# proc findData*(command: types.Command, dbItems: seq[DbItem]): auto =
+#   let hash = command.dbHash()
+
+#   let xs = dbItems.asList()
+#   list.find(xs, x => x.data == hash)
+#   # .fold(
+#   #   () => command,
+#   #   x => types.Command.increment(x)
+#   # )
+
+# proc assignDbRows*(dbEntries = dbRead()): auto =
+#   let entries = dbEntries.sortBy(cmpByCount)
+#   entries
+#   #  commands.map(x => entries.find(y => y.data ))
+
+when isMainModule:
+  echo dbRead()
+  # echo assignDbRows()

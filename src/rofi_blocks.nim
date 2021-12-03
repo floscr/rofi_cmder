@@ -63,7 +63,11 @@ proc main(): auto =
         options={poStdErrToStdOut, poEvalCommand}
       )
 
-      discard dbUpdateInsertRow(dbDataKeyFromCommand(command.get()))
+      discard dbUpdateInsertRow(
+        command
+        .get()
+        .dbHash()
+      )
 
       quit(1)
 
