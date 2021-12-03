@@ -15,11 +15,11 @@ import zero_functional
 
 {.experimental: "caseStmtMacros".}
 
-type DesktopEntry = ref object
-  filePath: string
-  entryName: string
-  name: string
-  exec: string
+type DesktopEntry* = ref object
+  filePath*: string
+  entryName*: string
+  name*: string
+  exec*: string
 
 proc `$`*(x: DesktopEntry): string =
   &"""DesktopEntry(
@@ -85,7 +85,3 @@ proc getDesktopApplications*(dirs: seq[string] = getDesktopApplicationsDirs()): 
 
   desktopFiles --> map(parseDesktopFile)
   .flatten()
-
-# echo getDesktopApplicationsDirs()
-# echo getDesktopApplications()
-echo getDesktopApplications(@[ "/etc/profiles/per-user/floscr/share" ])
