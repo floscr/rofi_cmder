@@ -12,10 +12,13 @@ import ../state
 
 {.experimental: "caseStmtMacros".}
 
+type ModuleArgT = tuple[value: string, words: seq[string]]
+type ModuleResultT = Maybe[seq[types.Command]]
+
 let empty = nothing(seq[types.Command])
 
-proc convertUnitModule(value: string): Maybe[seq[types.Command]] =
-  let unitMatch = value.split(re" in ")
+proc convertUnitModule(x: ModuleArgT): ModuleResultT =
+  let unitMatch = x.value.split(re" in ")
 
   if unitsBinPath.isDefined() and unitMatch.len == 2:
     sh(&"""{unitsBinPath.get()} "{unitMatch[0]}" {unitMatch[1]}""")
@@ -25,9 +28,9 @@ proc convertUnitModule(value: string): Maybe[seq[types.Command]] =
   else:
     empty
 
-proc calcModule(value: string): Maybe[seq[types.Command]] =
-  if value =~ re"\d":
-    sh(&"""echo "{value}" | bc""")
+proc calcModule(x: ModuleArgT): ModuleResultT =
+  if x.value =~ re"\d":
+    sh(&"""echo "{x.value}" | bc""")
     .filter(x => not x.startsWith("(standard_in)"))
     .map(asClipboardCopyCommand)
     .asMaybe()
@@ -42,7 +45,7 @@ proc matchInput(value: string): seq[types.Command] =
     convertUnitModule,
     calcModule,
   ]
-  .firstJust(value)
+  .firstJust((value, words))
   .getOrElse(@[])
 
 proc getDynamicCommands*(state: State): seq[types.Command] =
