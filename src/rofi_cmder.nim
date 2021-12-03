@@ -76,6 +76,12 @@ proc main(): auto =
         )
 
         quit(1)
+      else:
+        let response = onStdinJson(state.stdinJsonState)
+        .concat(
+          filteredCommands.map((x: types.Command) => x.name)
+        )
+        echo sendJson(response)
 
     sleep 1
 
