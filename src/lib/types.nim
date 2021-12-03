@@ -81,3 +81,9 @@ proc increment*(x: Command): Command =
 proc setCount*(x: Command, val: countT): Command =
   cascade x:
     count = val.some()
+
+proc asClipboardCopyCommand*(name: string): Command =
+  Command(
+    name: name,
+    command: some(fmt"""echo "{name.quoteShell()}" | xclip -selection clipboard -in"""),
+  )

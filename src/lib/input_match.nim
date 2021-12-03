@@ -8,17 +8,20 @@ import fp/maybe
 import fp/either
 import ./env
 import ./utils/fp
+import ./types
 import ./state
 
-proc matchInput(value: string): seq[string] =
+proc matchInput(value: string): seq[types.Command] =
   let unitMatch = value.split(re" in ")
   if unitsBinPath.isDefined() and unitMatch.len == 2:
     sh(&"""{unitsBinPath.get()} "{unitMatch[0]}" {unitMatch[1]}""")
+    .map(asClipboardCopyCommand)
     .asSeq()
 
   elif value =~ re"\d":
     sh(&"""echo "{value}" | bc""")
     .filter(x => not x.startsWith("(standard_in)"))
+    .map(asClipboardCopyCommand)
     .asSeq()
 
   else:
