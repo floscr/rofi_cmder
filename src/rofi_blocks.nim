@@ -16,18 +16,18 @@ var stdinJsonState: JsonNode = %* {"name": "noop", "value": "", }
 proc main(): auto =
   let commands: seq[ConfigItem] = getCommands()
   .getOrElse(@[])
-  let descriptions: seq[string] = commands.mapIt(it.description)
-  
+
   while true:
     var command = readStdinNonBlocking(stdinState)
-
-    # writeFile("/tmp/rof_blocks_logs", command)
 
     if not command.isEmptyOrWhitespace:
       stdinJsonState = parseJson(command)
 
     let response = onStdinJson(stdinJsonState)
-    .concat(descriptions)
+    .concat(
+      commands
+      .getCommandDescriptions(stdinJsonState["value"].getStr(""))
+    )
 
     echo sendJson(response)
 
