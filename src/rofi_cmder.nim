@@ -17,7 +17,7 @@ import ./lib/state
 import ./lib/types
 import ./lib/utils_option
 
-proc getCommandItems(): seq[types.Command] =
+proc getDefaultEntries(): seq[types.Command] =
   let commands = concat(
     getCommands().getOrElse(@[]),
     getDesktopApplications(),
@@ -33,7 +33,7 @@ proc getCommandItems(): seq[types.Command] =
 proc main(): auto =
   var stdinState: rofiBlocks.consoleInputState
 
-  let commands = getCommandItems()
+  let defaultEntries = getDefaultEntries()
 
   while true:
     # Update the state from stdin
@@ -43,7 +43,7 @@ proc main(): auto =
 
     let state = store.getState
 
-    let filteredCommands = commands.filterByNames(state.inputText)
+    let filteredEntries = defaultEntries.filterByNames(state.inputText)
 
     case state.stdinJsonState["name"].getStr():
       of ROFI_BLOCKS_EVENT_SUBMIT:
@@ -51,7 +51,7 @@ proc main(): auto =
           state.stdinJsonState["data"].getStr().parseInt
         )
         .flatMap((x: int) => tryET(
-          filteredCommands[x]
+          filteredEntries[x]
         ))
 
         let commandString = command
@@ -79,7 +79,7 @@ proc main(): auto =
       else:
         let response = onStdinJson(state.stdinJsonState)
         .concat(
-          filteredCommands.map((x: types.Command) => x.name)
+          filteredEntries.map((x: types.Command) => x.name)
         )
         echo sendJson(response)
 
