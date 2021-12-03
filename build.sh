@@ -21,5 +21,5 @@ direnv-start() {
 
 direnv-stop
 rm -rf errors.log
-nix run .#rofi_cmder_2 --print-build-logs
+nix run
 direnv-start
