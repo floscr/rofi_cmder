@@ -4,7 +4,6 @@ import std/streams
 import std/sugar
 import std/os
 import std/sequtils
-import std/collections/sequtils
 import fusion/matching
 import zero_functional
 import types

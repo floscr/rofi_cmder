@@ -5,7 +5,6 @@ import std/sugar
 import std/re
 import std/os
 import std/sequtils
-import std/collections/sequtils
 import std/options
 import std/strformat
 import fusion/matching

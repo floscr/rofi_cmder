@@ -6,21 +6,17 @@ import std/sugar
 import std/osproc
 
 import fp/either
-import fp/list
 import fp/maybe
-import fp/std/jsonops
 
 import lib/rofi_blocks_lib as rofiBlocks
 import lib/input_match
 import lib/commands
 import lib/state
 import lib/redux
-import lib/debug
 import lib/desktop_entries
 import lib/steam_games
 import lib/types
 import lib/utils_option
-
 
 # State
 var stdinState: rofiBlocks.consoleInputState
@@ -62,7 +58,7 @@ proc main(): auto =
 
       if (command.isEmpty()): quit(0)
 
-      let p = startProcess(command.get(), options={poStdErrToStdOut, poEvalCommand})
+      discard startProcess(command.get(), options={poStdErrToStdOut, poEvalCommand})
 
       quit(1)
 

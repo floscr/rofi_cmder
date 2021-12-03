@@ -1,9 +1,7 @@
 import std/json
-import std/re
 import std/os
 import std/sugar
 import std/strutils
-import std/sequtils
 import fp/tryM
 import fp/std/jsonops
 import fp/either

@@ -1,8 +1,8 @@
 import osproc
 import std/json
 import std/re
-import std/sequtils
 import strformat
+
 
 proc matchInput(value: string): seq[string] =
   if value =~ re"\d":
