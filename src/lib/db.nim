@@ -100,6 +100,12 @@ proc fromCsvRowString(x: string): DbItem =
     data: data,
   )
 
+proc fromString*(x: string): seq[DbItem] =
+  x
+  .dup(stripLineEnd)
+  .split("\n")
+  .map(fromCsvRowString)
+
 proc openDbStream(path: string): FileStream =
   openFileStream(path, fmRead)
 
