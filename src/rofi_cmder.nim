@@ -27,8 +27,8 @@ proc main(): auto =
 
   let commands = mainCommands
   .concat(getDesktopApplications())
-  .concat(getDesktopApplications())
   .concat(getXmonadCommands())
+  .concat(getSteamGames())
 
   let sortedCommands = dbRead()
   .sortCommandsByDbMap(commands)
