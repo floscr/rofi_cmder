@@ -33,14 +33,14 @@ proc dbDate*(x: DateTime): string =
 proc dbDate*(): string {.inline.} =
   utc(now()).dbDate()
 
-type countT* = int
-type timeT* = string
 type dataT* = string
+type timeT* = string
+type countT* = int
 type
   DbItem* = object
-    count*: countT
-    time*: timeT
     data*: dataT
+    time*: timeT
+    count*: countT
 
 proc `$`*(x: DbItem): string =
   &"""DbItem(
@@ -72,16 +72,25 @@ proc increment(x: DbItem): DbItem =
   cascade x:
     count = x.count + 1
 
-proc createDbItem(data: dataT): DbItem =
+proc createDbItem*(
+  data: dataT,
+  time = dbDate(),
+  count = 0,
+): DbItem =
   DbItem(
-    count: 0,
-    time: dbDate(),
     data: data,
+    time: time,
+    count: count,
   )
 
 proc toCsvRowString(x: DbItem): string =
   (count: @count, time: @time, data: @data) := x
   &"{count},{time},{data}"
+
+proc toCsvRowStrings*(xs: seq[DbItem]): string =
+  xs -->
+  map(toCsvRowString) -->
+  fold("", a & it & "\n")
 
 proc fromCsvRowString(x: string): DbItem =
   [@count, @time, @data] := x.split(",", maxsplit = 2)
@@ -138,10 +147,7 @@ proc dbUpdateInsertRow(data: string, dbPath = env.dbPath()): auto =
   openDbStream(dbPath)
   .tryET()
   .flatMap((stream: FileStream) =>
-           incrementDbRow(
-             key = data,
-             dbStream = stream,
-           )
+           incrementDbRow(key = data, dbStream = stream,)
            .tryET()
   )
   .flatMap((xs: (string, DbTransaction)) =>
