@@ -26,19 +26,10 @@ proc `$`*(x: ConfigItem): string =
   &"""ConfigItem(description: {x.description})"""
 
 proc serialize(json: JsonNode): ConfigItem =
-  # let description = json.mget("description") >>= mvalue(string)
-
-  # if (description.isLeft):
-  #   raise newException(Exception, &"No description given for item: \n{json}")
-
-  # if (description.get().isEmpty):
-  #   raise newException(Exception, &"No description given for item: \n{json}")
-
   let description = json.mget("description").flatMap(mvalue(string)).asOption().join()
   let binding = json.mget("binding").flatMap(mvalue(string)).asOption().join()
   let command = json.mget("command").flatMap(mvalue(string)).asOption().join()
   let exclude = json.mget("exclude ").flatMap(mvalue(bool)).asOption().join()
-
 
   ConfigItem(
     description: description.getOrElse(""),
