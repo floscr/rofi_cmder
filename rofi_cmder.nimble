@@ -14,6 +14,8 @@ binDir        = "./dst"
 requires "nim >= 1.4.4"
 requires "nimfp >= 0.4.5"
 requires "cligen >= 1.5.4"
+requires "zero_functional"
+requires "print"
 
 import distros
 if detectOs(NixOS):
