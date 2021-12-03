@@ -4,6 +4,7 @@ import std/sequtils
 import std/os
 import std/sugar
 import std/logging
+import std/osproc
 
 import fp/either
 import fp/list
@@ -48,6 +49,9 @@ proc main(): auto =
       .getOrElse("")
 
       fileLogger.log(lvlInfo, command)
+
+      let p = startProcess(command, options={poStdErrToStdOut, poEvalCommand})
+      discard waitForExit(p)
       quit(1)
 
     echo sendJson(response)
