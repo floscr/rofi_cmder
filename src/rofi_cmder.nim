@@ -45,11 +45,6 @@ proc main(): auto =
 
     let filteredCommands = commands.filterByNames(state.inputText)
 
-    let response = onStdinJson(state.stdinJsonState)
-    .concat(
-      filteredCommands.map((x: types.Command) => x.name)
-    )
-
     if state.stdinJsonState["name"].getStr() == "select entry":
       let command = tryET(
         state.stdinJsonState["data"].getStr().parseInt
@@ -80,8 +75,6 @@ proc main(): auto =
       )
 
       quit(1)
-
-    echo sendJson(response)
 
     sleep 1
 
