@@ -5,7 +5,7 @@ import fpUtils
 import utils
 import os
 import osproc
-import regex
+import std/re
 import sequtils
 import strformat
 import strutils
