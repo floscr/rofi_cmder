@@ -65,7 +65,7 @@ proc matchInput(value: string): seq[types.Command] =
   @[
     convertUnitModule,
     calcModule,
-    googlerModule,
+    # googlerModule,
   ]
   .firstJust((value, words))
   .getOrElse(@[])
