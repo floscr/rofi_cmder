@@ -17,7 +17,7 @@ import ./lib/state
 import ./lib/types
 import ./lib/utils_option
 
-proc getDefaultEntries(): seq[types.Command] =
+proc getStaticEntries(): seq[types.Command] =
   let commands = concat(
     getCommands().getOrElse(@[]),
     getDesktopApplications(),
@@ -33,7 +33,7 @@ proc getDefaultEntries(): seq[types.Command] =
 proc main(): auto =
   var stdinState: rofiBlocks.consoleInputState
 
-  let defaultEntries = getDefaultEntries()
+  let staticEntries = getStaticEntries()
 
   while true:
     # Update the state from stdin
@@ -43,7 +43,14 @@ proc main(): auto =
 
     let state = store.getState
 
-    let filteredEntries = defaultEntries.filterByNames(state.inputText)
+    let dynamicEntries = onStdinJson(state)
+
+    let entries: seq[Command] = concat(
+      dynamicEntries,
+      staticEntries,
+    )
+
+    let filteredEntries = entries.filterByNames(state.inputText)
 
     case state.stdinJsonState["name"].getStr():
       of ROFI_BLOCKS_EVENT_SUBMIT:
@@ -77,11 +84,10 @@ proc main(): auto =
 
         quit(1)
       else:
-        let response = onStdinJson(state.stdinJsonState)
-        .concat(
-          filteredEntries.map((x: types.Command) => x.name)
-        )
-        echo sendJson(response)
+        let printableEntries: seq[string] = filteredEntries
+        .map((x: types.Command) => x.name)
+
+        echo sendJson(printableEntries)
 
     sleep 1
 
