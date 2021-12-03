@@ -1,21 +1,24 @@
-import osproc
 import std/json
 import std/re
 import std/strformat
+import std/collections/sequtils
+import std/strutils
+import std/sugar
 import fp/maybe
+import fp/either
 import ./env
+import ./utils/fp
 
 proc matchInput(value: string): seq[string] =
   let unitMatch = value.split(re" in ")
   if unitsBinPath.isDefined() and unitMatch.len == 2:
-    @[
-      execProcess(&"""{unitsBinPath.get()} "{unitMatch[0]}" {unitMatch[1]}""")
-    ]
+    sh(&"""{unitsBinPath.get()} "{unitMatch[0]}" {unitMatch[1]}""")
+    .asSeq()
 
   elif value =~ re"\d":
-    @[
-      execProcess(&"""echo "{value}" | bc""")
-    ]
+    sh(&"""echo "{value}" | bc""")
+    .filter(x => not x.startsWith("(standard_in)"))
+    .asSeq()
 
   else:
     @[]
