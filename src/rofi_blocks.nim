@@ -1,23 +1,21 @@
 import std/json
-import std/strutils
-import std/sequtils
 import std/os
-import std/sugar
 import std/osproc
-
+import std/sequtils
+import std/strutils
+import std/sugar
 import fp/either
 import fp/maybe
-
-import lib/rofi_blocks_lib as rofiBlocks
-import lib/input_match
-import lib/commands
-import lib/state
-import lib/redux
-import lib/desktop_entries
-import lib/steam_games
-import lib/types
-import lib/utils_option
-import lib/db
+import ./lib/db
+import ./lib/input_match
+import ./lib/modules/commands
+import ./lib/modules/desktop_entries
+import ./lib/modules/steam_games
+import ./lib/redux
+import ./lib/rofi_blocks_lib as rofiBlocks
+import ./lib/state
+import ./lib/types
+import ./lib/utils_option
 
 # State
 var stdinState: rofiBlocks.consoleInputState

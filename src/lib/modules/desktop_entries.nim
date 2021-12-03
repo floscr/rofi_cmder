@@ -6,7 +6,7 @@ import std/os
 import std/sequtils
 import fusion/matching
 import zero_functional
-import types
+import ../types
 
 {.experimental: "caseStmtMacros".}
 

@@ -9,7 +9,7 @@ import std/options
 import std/strformat
 import fusion/matching
 import zero_functional
-import types
+import ../types
 
 {.experimental: "caseStmtMacros".}
 
@@ -64,7 +64,3 @@ proc getSteamGames*(path: string = getSteamAppsDir()): auto =
   let configFiles = findConfigFiles(path)
 
   configFiles  --> map(parseConfigFile)
-
-when isMainModule:
-  # echo getDesktopApplications()
-  echo getSteamApps()

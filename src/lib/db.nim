@@ -22,6 +22,7 @@ import print
 {.experimental: "caseStmtMacros".}
 
 const DB_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:sszzz"
+const DB_DATA_SPLIT_CHAR = "​" # Zero Width Space
 
 ## Data Types:
 
@@ -106,7 +107,9 @@ proc fromString*(x: string): seq[DbItem] =
   .map(fromCsvRowString)
 
 proc dbDataKeyFromCommand*(x: types.Command): dataT =
-  x.name & x.command.get("")
+  x.name &
+    DB_DATA_SPLIT_CHAR &
+    x.command.get("")
 
 proc openCreateDbStream(path: string): Stream =
   if fileExists(path):
