@@ -13,9 +13,9 @@ proc readStdinNonBlocking* (state: var consoleInputState): string =
   else:
     result = ""
 
-proc sendJson*(lines: seq[string]): JsonNode =
+proc sendJson*(xs: seq[string]): JsonNode =
   %* {
     "input action": "send",
     "prompt": "Search",
-    "lines": lines
+    "lines": xs,
   }
