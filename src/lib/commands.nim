@@ -32,12 +32,9 @@ proc getCommandsConfigDir(): string =
   .joinPath(constants.CONFIG_DIRNAME)
   .joinPath(constants.COMMANDS_CONFIG_FILENAME)
 
-proc hasTestStr(testStr: string, matches: seq[string]): bool =
-  matches.all(x => testStr.contains(x))
-
-proc fromJsonSeq(xs: seq[JsonNode]): seq[ConfigItem] =
+proc fromJsonSeq(xs: seq[JsonNode]): seq[types.Command] =
   xs --> map((x: JsonNode) => fromJsonNode(x))
-  .filter(not it.description.isEmptyOrWhitespace())
+  .filter(not it.name.isEmptyOrWhitespace())
 
 proc getCommands*(path: string = getCommandsConfigDir()): auto =
   tryET(readFile(path))
@@ -45,10 +42,3 @@ proc getCommands*(path: string = getCommandsConfigDir()): auto =
     parseJson(x).getElems()
   ))
   .flatMap((xs: seq[JsonNode]) => tryET(xs.fromJsonSeq))
-
-proc filterCommands*(xs: seq[ConfigItem], testString: string): seq[ConfigItem] =
-  let testString = testString
-  .toLowerAscii
-  .split(re"\s+")
-
-  xs --> filter(it.description.toLowerAscii.hasTestStr(testString))

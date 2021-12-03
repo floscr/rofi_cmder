@@ -1,6 +1,12 @@
 import std/strformat
 import fusion/matching
 import std/options
+import std/strformat
+import std/re
+import std/strutils
+import std/sequtils
+import std/sugar
+import zero_functional
 
 {.experimental: "caseStmtMacros".}
 
@@ -31,3 +37,13 @@ proc `$`*(x: Command): string =
        return &"""Command(
     name: {x.name},
 )"""
+
+proc hasTestStr(testStr: string, matches: seq[string]): bool =
+  matches.all(x => testStr.contains(x))
+
+proc filterByNames*(xs: seq[Command], testString: string): seq[Command] =
+  let testString = testString
+  .toLowerAscii()
+  .split(re"\s+")
+
+  xs --> filter(it.name.toLowerAscii().hasTestStr(testString))
