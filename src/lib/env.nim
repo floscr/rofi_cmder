@@ -1,4 +1,6 @@
 import std/os
+import std/sugar
+import fp/maybe
 
 const APP_NAME* = "rofi_cmder"
 
@@ -16,3 +18,10 @@ proc dbPath*(): string =
 proc commandsPath*(): string =
   configDir()
   .joinPath(COMMANDS_FILE_NAME)
+
+const UNITS_BIN_PATH {.strdefine.} = ""
+
+let unitsBinPath* = UNITS_BIN_PATH
+.just()
+.notEmpty()
+.filter(x => not x.defined())

@@ -1,14 +1,22 @@
 import osproc
 import std/json
 import std/re
-import strformat
-
+import std/strformat
+import fp/maybe
+import ./env
 
 proc matchInput(value: string): seq[string] =
-  if value =~ re"\d":
+  let unitMatch = value.split(re" in ")
+  if unitsBinPath.isDefined() and unitMatch.len == 2:
+    @[
+      execProcess(&"""{unitsBinPath.get()} "{unitMatch[0]}" {unitMatch[1]}""")
+    ]
+
+  elif value =~ re"\d":
     @[
       execProcess(&"""echo "{value}" | bc""")
     ]
+
   else:
     @[]
 

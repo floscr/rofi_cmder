@@ -12,6 +12,7 @@
         pkgs = nixpkgs.legacyPackages.${system};
         nimpkgs = nimble.packages.${system};
         buildInputs = with pkgs; [
+          units
         ];
       in
       rec {
@@ -69,11 +70,11 @@
                     --verbosity:0 \
                     --hint[Processing]:off \
                     --excessiveStackTrace:on \
+                    -d:UNITS_BIN_PATH="${pkgs.units}/bin/units" \
                     -p:${fusion}/src \
                     -p:${nimfp}/src \
                     -p:${nimpkgs.cascade}/src \
                     -p:${nimpkgs.classy}/src \
-                    -p:${nimpkgs.cligen}/src \
                     -p:${nimpkgs.cligen}/src \
                     -p:${nimpkgs.nimboost}/src \
                     -p:${nimpkgs.print}/src \
