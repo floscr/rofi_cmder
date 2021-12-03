@@ -154,7 +154,7 @@ proc dbUpdateInsertRow*(data: string, dbPath = env.dbPath()): auto =
   openDbStream(dbPath)
   .tryET()
   .flatMap((stream: FileStream) =>
-           incrementDbRow(key = data, dbStream = stream,)
+           incrementDbRow(key = data, dbStream = stream)
            .tryET()
   )
   .flatMap((xs: (string, DbTransaction)) =>
