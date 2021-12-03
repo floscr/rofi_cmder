@@ -65,6 +65,8 @@ proc parseDesktopFile(path: string): seq[DesktopEntry] =
   if currentEntr != nil:
     entries.add(currentEntr)
 
+  strm.close()
+
   entries
 
 proc getDesktopApplicationsDirs(): seq[string] =
