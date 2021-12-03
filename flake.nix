@@ -71,15 +71,15 @@
                     --hint[Processing]:off \
                     --excessiveStackTrace:on \
                     -p:${fusion}/src \
+                    -p:${nimfp}/src \
+                    -p:${nimpkgs.cascade}/src \
+                    -p:${nimpkgs.classy}/src \
                     -p:${nimpkgs.cligen}/src \
                     -p:${nimpkgs.cligen}/src \
                     -p:${nimpkgs.nimboost}/src \
-                    -p:${nimpkgs.classy}/src \
-                    -p:${nimfp}/src \
                     -p:${nimpkgs.print}/src \
-                    -p:${nimpkgs.cascade}/src \
-                    -p:${nimpkgs.unicodedb}/src \
                     -p:${nimpkgs.regex}/src \
+                    -p:${nimpkgs.unicodedb}/src \
                     -p:${nimpkgs.unpack}/src \
                     -p:${nimpkgs.zero_functional}/src \
                     --out:$TMPDIR/${name} \
