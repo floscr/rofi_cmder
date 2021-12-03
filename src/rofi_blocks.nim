@@ -8,9 +8,9 @@ import fp/either
 import fp/maybe
 import ./lib/db
 import ./lib/input_match
-import ./lib/modules/commands
-import ./lib/modules/desktop_entries
-import ./lib/modules/steam_games
+import ./lib/modules/module_commands
+import ./lib/modules/module_desktop_entries
+import ./lib/modules/module_steam_games
 import ./lib/redux
 import ./lib/rofi_blocks_lib as rofiBlocks
 import ./lib/state

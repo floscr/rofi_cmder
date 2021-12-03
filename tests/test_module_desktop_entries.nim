@@ -2,7 +2,7 @@ import std/os
 import std/unittest
 import std/options
 
-import ../src/lib/modules/desktop_entries
+import ../src/lib/modules/module_desktop_entries
 
 suite "desktop_entries":
   test "File parsing":
