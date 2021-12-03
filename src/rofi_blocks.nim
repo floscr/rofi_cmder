@@ -28,6 +28,9 @@ proc main(): auto =
   .concat(getDesktopApplications())
   .concat(getSteamGames())
 
+  let sortedCommands = dbRead()
+  .sortCommandsByDbMap(commands)
+
   while true:
     var command = readStdinNonBlocking(stdinState)
 
@@ -37,7 +40,7 @@ proc main(): auto =
 
     let state = store.getState
 
-    let filteredCommands = commands.filterByNames(state.inputText)
+    let filteredCommands = sortedCommands.filterByNames(state.inputText)
 
     let response = onStdinJson(state.stdinJsonState)
     .concat(

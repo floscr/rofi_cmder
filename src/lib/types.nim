@@ -71,6 +71,13 @@ proc dbHash*(x: Command): string =
     DB_HASH_DATA_SPLIT_CHAR &
     x.command.get("")
 
+proc cmpByCount*(x: Command, y: Command): int =
+  cmp(y.count.get(0), x.count.get(0))
+
 proc increment*(x: Command): Command =
   cascade x:
     count = x.count.map(y => y + 1)
+
+proc setCount*(x: Command, val: countT): Command =
+  cascade x:
+    count = val.some()

@@ -1,5 +1,6 @@
 import std/unittest
 import std/streams
+import fp/list
 import ../src/lib/db
 
 suite "db":
@@ -38,3 +39,6 @@ suite "db":
 
     check: transaction.kind == Insert
     check: transaction.dbItem.count == 0
+
+  test "read":
+    echo dbRows(db.asList())

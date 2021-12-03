@@ -179,30 +179,30 @@ proc dbUpdateInsertRow*(data: string, dbPath = env.dbPath()): EitherE[DbTransact
 proc toPair*(x: DbItem): tuple[k: dataT, v: DbItem] =
   (x.data, x)
 
-proc dbRead*(dbPath = env.dbPath()): auto =
-  var result = readFile(dbPath)
-  stripLineEnd(result)
+type DbMap* = Map[string, DbItem]
 
-  result
+proc dbRead*(dbPath = env.dbPath()): DbMap =
+  var element = readFile(dbPath)
+  stripLineEnd(element)
+
+  element
   .split("\n")
   .asList
   .map(x => fromCsvRowString(x).toPair())
   .asMap()
 
-# proc findData*(command: types.Command, dbItems: seq[DbItem]): auto =
-#   let hash = command.dbHash()
+proc sortCommandsByDbMap*(dbMap: DbMap, cmds: seq[types.Command]): seq[types.Command] =
+  let elements = cmds --> map((cmd: types.Command) =>
+                                dbMap
+                                .get(cmd.dbHash())
+                                .map((y: DbItem) => cmd.setCount(y.count))
+                                .getOrElse(cmd)
+  )
+  .partition(it.count.isSome())
 
-#   let xs = dbItems.asList()
-#   list.find(xs, x => x.data == hash)
-#   # .fold(
-#   #   () => command,
-#   #   x => types.Command.increment(x)
-#   # )
-
-# proc assignDbRows*(dbEntries = dbRead()): auto =
-#   let entries = dbEntries.sortBy(cmpByCount)
-#   entries
-#   #  commands.map(x => entries.find(y => y.data ))
+  elements[0]
+  .sorted(cmpByCount)
+  .concat(elements[1])
 
 when isMainModule:
   echo dbRead()
