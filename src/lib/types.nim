@@ -1,7 +1,5 @@
-import typetraits
 import std/strformat
 import fusion/matching
-import fp/option
 import std/options
 
 {.experimental: "caseStmtMacros".}
