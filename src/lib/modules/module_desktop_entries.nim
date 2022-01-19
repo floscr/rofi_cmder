@@ -3,6 +3,7 @@ import std/strutils
 import std/streams
 import std/sugar
 import std/os
+import std/re
 import std/sequtils
 import fusion/matching
 import zero_functional
@@ -40,7 +41,12 @@ proc parseDesktopFile(path: string): seq[types.Command] =
         currentEntr.name = value
         continue
       of ["Exec", @value]:
-        currentEntr.command = value.some
+        currentEntr.command = value
+        # Remove field code
+        # https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html
+        .replace(re"""%[fFuUick]\b""", "")
+        .some
+
         continue
 
   # Push the last parsed entry to the captured entries
