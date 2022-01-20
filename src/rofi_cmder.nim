@@ -16,6 +16,7 @@ import ./lib/rofi_blocks_lib as rofiBlocks
 import ./lib/state
 import ./lib/types
 import ./lib/utils_option
+import ./lib/utils/debug
 
 proc getStaticEntries(): seq[types.Command] =
   let commands = concat(
@@ -71,6 +72,11 @@ proc main(): auto =
 
         discard execShellCmd(
           commandString
+          # Keep processes alive after cmder exits
+          .map((x: string) => (
+            if x.startsWith("nohup"): x
+            else: "nohup 1>/dev/null 2>/dev/null " & x
+          ))
           .map((x: string) => (
             if x.endsWith("&"): x
             else: x & "&"
