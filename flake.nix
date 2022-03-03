@@ -55,7 +55,7 @@
                     owner = "floscr";
                     repo = "nimfp";
                     rev = "master";
-                    sha256 = "sha256-gEs4qovho5qTXCquEG+fZOsL3rGB+Ql/r0IeLhnHjFk=";
+                    sha256 = "sha256-4EzwK8FPbDxeSjw0x8iYTgF6YJvOXZ69zPc19fkTX7s=";
                   });
               in
               ''
