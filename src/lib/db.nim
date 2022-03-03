@@ -187,6 +187,7 @@ proc dbRead*(dbPath = env.dbPath()): DbMap =
 
   element
   .split("\n")
+  .filter(x => x != "")
   .asList
   .map(x => fromCsvRowString(x).toPair())
   .asMap()
