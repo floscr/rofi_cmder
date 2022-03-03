@@ -18,6 +18,7 @@ requires "zero_functional"
 requires "print"
 requires "redux"
 requires "fusion"
+requires "cascade"
 
 import distros
 if detectOs(NixOS):
