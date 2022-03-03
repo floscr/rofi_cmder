@@ -15,7 +15,6 @@ import ./lib/redux
 import ./lib/rofi_blocks_lib as rofiBlocks
 import ./lib/state
 import ./lib/types
-import ./lib/utils_option
 import ./lib/utils/debug
 
 proc getStaticEntries(): seq[types.Command] =

@@ -9,7 +9,6 @@ import fp/maybe
 import zero_functional
 import ../env
 import ../types
-import ../utils_option.nim
 
 proc fromJsonNode(json: JsonNode): types.Command =
   let description = json.mget("description").flatMap(mvalue(string)).asMaybe().join()
