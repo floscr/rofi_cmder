@@ -90,7 +90,7 @@ proc main(): auto =
             .dbHash()
           )
 
-        quit(1)
+        quit(0)
       else:
         let printableEntries: seq[string] = filteredEntries
         .map((x: types.Command) => x.name)
