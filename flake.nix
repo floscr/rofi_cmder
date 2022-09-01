@@ -63,6 +63,7 @@
                 # Pass paths of needed buildInputs
                 # and nim packages fetched from nix
                 nim compile \
+                    --mm:orc \
                     --threads \
                     -d:release \
                     --verbosity:0 \
